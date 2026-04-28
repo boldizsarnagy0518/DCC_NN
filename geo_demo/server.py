@@ -1,0 +1,266 @@
+import argparse
+import json
+import mimetypes
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from urllib.parse import parse_qs, urlparse
+
+from .data import STATIC_DIR, corpus_modes, load_corpus, load_prompts
+from .providers import (
+    PROVIDERS,
+    ProviderError,
+    build_grounded_prompt,
+    call_provider,
+    mock_answer,
+    provider_status,
+)
+from .linking import count_nn_mentions, extract_link_recommendations
+from .retrieval import retrieve_sources
+from .scoring import score_answer
+
+
+def json_response(handler, payload, status=200):
+    body = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
+    handler.send_response(status)
+    handler.send_header("Content-Type", "application/json; charset=utf-8")
+    handler.send_header("Content-Length", str(len(body)))
+    handler.end_headers()
+    handler.wfile.write(body)
+
+
+def read_request_json(handler):
+    length = int(handler.headers.get("Content-Length", "0"))
+    if length == 0:
+        return {}
+    raw = handler.rfile.read(length).decode("utf-8")
+    return json.loads(raw)
+
+
+def compact_source(source):
+    return {
+        "id": source["id"],
+        "title": source["title"],
+        "type": source["type"],
+        "pillar": source["pillar"],
+        "source_url": source.get("source_url", "local-demo"),
+        "body": source["body"],
+    }
+
+
+def run_single(prompt_item, corpus_mode, provider_id, use_live=False):
+    corpus = load_corpus(corpus_mode)
+    sources = retrieve_sources(prompt_item["prompt"], corpus, limit=5)
+    grounded_prompt = build_grounded_prompt(prompt_item["prompt"], sources)
+    provider_mode = "mock"
+    error = None
+
+    if use_live:
+        try:
+            answer = call_provider(provider_id, grounded_prompt)
+            provider_mode = "api"
+        except ProviderError as exc:
+            answer = mock_answer(provider_id, prompt_item["prompt"], sources, corpus_mode)
+            error = str(exc)
+    else:
+        answer = mock_answer(provider_id, prompt_item["prompt"], sources, corpus_mode)
+
+    return {
+        "prompt_id": prompt_item["id"],
+        "prompt": prompt_item["prompt"],
+        "category": prompt_item["category"],
+        "model": provider_id,
+        "model_label": PROVIDERS[provider_id]["label"],
+        "provider_mode": provider_mode,
+        "corpus_mode": corpus_mode,
+        "answer": answer,
+        "citations": [source["id"] for source in sources],
+        "nn_mentions": count_nn_mentions(answer),
+        "link_recommendations": extract_link_recommendations(answer, sources),
+        "retrieved_sources": [compact_source(source) for source in sources],
+        "scores": score_answer(answer, sources),
+        "error": error,
+    }
+
+
+def run_benchmark(prompt_ids=None, corpus_mode="both", models=None, use_live=False):
+    prompts = load_prompts()
+    prompt_lookup = {prompt["id"]: prompt for prompt in prompts}
+    if prompt_ids:
+        selected_prompts = [prompt_lookup[prompt_id] for prompt_id in prompt_ids if prompt_id in prompt_lookup]
+    else:
+        selected_prompts = prompts
+
+    selected_models = models or list(PROVIDERS)
+    modes = ["current", "improved"] if corpus_mode == "both" else [corpus_mode]
+
+    results = []
+    for prompt_item in selected_prompts:
+        for mode in modes:
+            for provider_id in selected_models:
+                if provider_id in PROVIDERS:
+                    results.append(run_single(prompt_item, mode, provider_id, use_live=use_live))
+    return results
+
+
+def summarize_results(results):
+    by_mode = {"current": [], "improved": []}
+    links_by_mode = {"current": 0, "improved": 0}
+    linked_answers_by_mode = {"current": 0, "improved": 0}
+    mentions_by_mode = {"current": 0, "improved": 0}
+    by_model = {}
+    prompt_deltas = {}
+    for result in results:
+        total = result["scores"]["total"]
+        by_mode.setdefault(result["corpus_mode"], []).append(total)
+        link_count = len(result.get("link_recommendations", []))
+        links_by_mode[result["corpus_mode"]] = links_by_mode.get(result["corpus_mode"], 0) + link_count
+        linked_answers_by_mode[result["corpus_mode"]] = linked_answers_by_mode.get(result["corpus_mode"], 0) + (
+            1 if link_count else 0
+        )
+        mentions_by_mode[result["corpus_mode"]] = mentions_by_mode.get(result["corpus_mode"], 0) + result.get(
+            "nn_mentions", 0
+        )
+        by_model.setdefault(result["model"], {}).setdefault(result["corpus_mode"], []).append(total)
+        key = (result["prompt_id"], result["model"])
+        prompt_deltas.setdefault(key, {})[result["corpus_mode"]] = total
+
+    def avg(values):
+        return round(sum(values) / len(values), 1) if values else 0
+
+    current_avg = avg(by_mode.get("current", []))
+    improved_avg = avg(by_mode.get("improved", []))
+    improved_pairs = 0
+    compared_pairs = 0
+    for pair in prompt_deltas.values():
+        if "current" in pair and "improved" in pair:
+            compared_pairs += 1
+            if pair["improved"] > pair["current"]:
+                improved_pairs += 1
+
+    model_summary = {}
+    for model, modes in by_model.items():
+        model_summary[model] = {
+            "current": avg(modes.get("current", [])),
+            "improved": avg(modes.get("improved", [])),
+            "delta": round(avg(modes.get("improved", [])) - avg(modes.get("current", [])), 1),
+        }
+
+    return {
+        "current_avg": current_avg,
+        "improved_avg": improved_avg,
+        "delta": round(improved_avg - current_avg, 1),
+        "improved_pairs": improved_pairs,
+        "compared_pairs": compared_pairs,
+        "model_summary": model_summary,
+        "current_nn_mentions": mentions_by_mode.get("current", 0),
+        "improved_nn_mentions": mentions_by_mode.get("improved", 0),
+        "current_nn_link_recommendations": links_by_mode.get("current", 0),
+        "improved_nn_link_recommendations": links_by_mode.get("improved", 0),
+        "link_recommendation_delta": links_by_mode.get("improved", 0) - links_by_mode.get("current", 0),
+        "current_linked_answers": linked_answers_by_mode.get("current", 0),
+        "improved_linked_answers": linked_answers_by_mode.get("improved", 0),
+    }
+
+
+class DemoHandler(BaseHTTPRequestHandler):
+    server_version = "NNGEODemo/1.0"
+
+    def do_GET(self):
+        parsed = urlparse(self.path)
+        if parsed.path == "/api/config":
+            json_response(
+                self,
+                {
+                    "prompts": load_prompts(),
+                    "providers": provider_status(),
+                    "corpus_modes": corpus_modes(),
+                },
+            )
+            return
+
+        if parsed.path == "/api/sources":
+            query = parse_qs(parsed.query)
+            mode = query.get("mode", ["current"])[0]
+            try:
+                json_response(self, {"mode": mode, "sources": load_corpus(mode)})
+            except ValueError as exc:
+                json_response(self, {"error": str(exc)}, status=400)
+            return
+
+        if parsed.path == "/api/cached":
+            results = run_benchmark(use_live=False)
+            json_response(self, {"results": results, "summary": summarize_results(results), "cached": True})
+            return
+
+        self.serve_static(parsed.path)
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        if parsed.path != "/api/run":
+            json_response(self, {"error": "Not found"}, status=404)
+            return
+
+        try:
+            payload = read_request_json(self)
+            prompt_ids = payload.get("prompt_ids")
+            if payload.get("prompt_id"):
+                prompt_ids = [payload["prompt_id"]]
+            corpus_mode = payload.get("corpus_mode", "both")
+            models = payload.get("models") or list(PROVIDERS)
+            use_live = bool(payload.get("use_live", False))
+            results = run_benchmark(prompt_ids=prompt_ids, corpus_mode=corpus_mode, models=models, use_live=use_live)
+            json_response(
+                self,
+                {
+                    "results": results,
+                    "summary": summarize_results(results),
+                    "cached": not use_live,
+                    "provider_status": provider_status(),
+                },
+            )
+        except (ValueError, KeyError, json.JSONDecodeError) as exc:
+            json_response(self, {"error": str(exc)}, status=400)
+
+    def serve_static(self, request_path):
+        if request_path in {"", "/"}:
+            path = STATIC_DIR / "index.html"
+        else:
+            relative = request_path.lstrip("/")
+            path = (STATIC_DIR / relative).resolve()
+            if STATIC_DIR.resolve() not in path.parents and path != STATIC_DIR.resolve():
+                json_response(self, {"error": "Invalid path"}, status=400)
+                return
+
+        if not path.exists() or not path.is_file():
+            json_response(self, {"error": "Not found"}, status=404)
+            return
+
+        content_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+        body = path.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, format, *args):
+        print("%s - - [%s] %s" % (self.address_string(), self.log_date_time_string(), format % args))
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Run the NN GEO controlled RAG demo dashboard.")
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--port", default=8765, type=int)
+    args = parser.parse_args()
+
+    if not Path(STATIC_DIR / "index.html").exists():
+        raise SystemExit("static/index.html not found")
+
+    server = ThreadingHTTPServer((args.host, args.port), DemoHandler)
+    print(f"NN GEO demo dashboard running at http://{args.host}:{args.port}")
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nStopping server")
+    finally:
+        server.server_close()

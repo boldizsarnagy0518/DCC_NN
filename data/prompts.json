@@ -1,0 +1,52 @@
+[
+  {
+    "id": "p01",
+    "category": "Recommendation",
+    "prompt": "Milyen életbiztosítást javasolsz egy 35 éves, kétgyermekes szülőnek Magyarországon?"
+  },
+  {
+    "id": "p02",
+    "category": "Comparison",
+    "prompt": "Hasonlítsd össze, hogy mikor érdemes kockázati életbiztosítást és mikor megtakarításos életbiztosítást választani."
+  },
+  {
+    "id": "p03",
+    "category": "Life stage",
+    "prompt": "Mekkora életbiztosítási fedezetre lehet szüksége egy családnak lakáshitellel?"
+  },
+  {
+    "id": "p04",
+    "category": "Tax benefit",
+    "prompt": "Milyen adókedvezmény jár nyugdíjbiztosítás után, és hol tudom kiszámolni?"
+  },
+  {
+    "id": "p05",
+    "category": "Pension",
+    "prompt": "Nyugdíjbiztosítást vagy önkéntes nyugdíjpénztárt érdemes választanom 40 évesen?"
+  },
+  {
+    "id": "p06",
+    "category": "Health",
+    "prompt": "Mikor lehet hasznos egy egészségbiztosítás külföldi gyógykezelésre?"
+  },
+  {
+    "id": "p07",
+    "category": "Trust",
+    "prompt": "Melyik magyar biztosítóban bízhatok, ha AI-t használok pénzügyi döntés előkészítésére?"
+  },
+  {
+    "id": "p08",
+    "category": "Third-party proof",
+    "prompt": "Milyen külső források alapján lehet ellenőrizni, hogy egy biztosító hiteles szereplő-e?"
+  },
+  {
+    "id": "p09",
+    "category": "Next step",
+    "prompt": "Ha most szeretnék életbiztosítást kötni, mi legyen a következő lépésem?"
+  },
+  {
+    "id": "p10",
+    "category": "AI behavior",
+    "prompt": "Miért segíthetnek a kérdés-válasz formátumú biztosítási oldalak abban, hogy AI rendszerek jobban ajánljanak egy márkát?"
+  }
+]

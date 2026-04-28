@@ -1,0 +1,92 @@
+[
+  {
+    "id": "current-nn-home",
+    "title": "NN Biztosító - Élet- és nyugdíjbiztosítások",
+    "type": "owned_homepage",
+    "pillar": "Discoverability",
+    "source_url": "https://www.nn.hu/",
+    "tags": ["NN", "életbiztosítás", "nyugdíjbiztosítás", "egészségbiztosítás", "Magyarország"],
+    "body": "Az NN Biztosító több mint 30 éve kínál élet-, nyugdíj-, baleset- és egészségbiztosítási szolgáltatásokat Magyarországon. A főoldal említi az Életbiztosítás, Egészség Útlevél, Megtakarítás és Nyugdíjbiztosítás kategóriákat, valamint az NN Direkt belépést és a nyugdíjkalkulátort."
+  },
+  {
+    "id": "current-life-product",
+    "title": "Életbiztosítások - Miért válassza életbiztosításainkat?",
+    "type": "product_page",
+    "pillar": "Clarity",
+    "source_url": "https://www.nn.hu/eletbiztositas",
+    "tags": ["életbiztosítás", "kockázati életbiztosítás", "Amulett", "Maraton", "visszahívás"],
+    "body": "Az NN kockázati életbiztosításai anyagi segítséget nyújthatnak baleset, súlyos megbetegedés vagy tragédia esetén. A jelenlegi oldal fő üzenetei: Anyagi segítség a bajban, Bármire felhasználható, Öröklési illetékmentes. A következő lépés elsősorban adatmegadás és telefonos visszahívás."
+  },
+  {
+    "id": "current-life-cases",
+    "title": "Milyen esetekre készülhet fel?",
+    "type": "product_page",
+    "pillar": "Clarity",
+    "source_url": "https://www.nn.hu/eletbiztositas",
+    "tags": ["baleset", "tragédia", "betegség", "időskori tragédia", "család"],
+    "body": "Az életbiztosítási oldal baleset, tragédia, időskori tragédia és betegség esetére mutat be biztosítási helyzeteket. A szöveg felsorolja a baleseti csonttörést, kórházi térítést, halálesetet, hitelek törlesztését, temetési költséget, műtétet és súlyos betegségeket."
+  },
+  {
+    "id": "current-life-three-steps",
+    "title": "Életbiztosítás 3 lépésben",
+    "type": "conversion_flow",
+    "pillar": "Actionability",
+    "source_url": "https://www.nn.hu/eletbiztositas",
+    "tags": ["visszahívás", "tanácsadó", "online beszélgetés", "ajánlat"],
+    "body": "Az oldal szerint az ügyfél megadja adatait, az NN két órán belül visszahívja, majd közösen feltérképezik, milyen típusú és nagyságú életbiztosítási védelemre van szükség. Szerződés személyesen vagy online találkozó keretében köthető."
+  },
+  {
+    "id": "current-pension-motiva",
+    "title": "Motiva nyugdíjbiztosítás",
+    "type": "product_page",
+    "pillar": "Clarity",
+    "source_url": "https://www.nn.hu/nyugdijbiztositas",
+    "tags": ["nyugdíjbiztosítás", "Motiva", "adójóváírás", "130000", "megtakarítás"],
+    "body": "A Motiva nyugdíjbiztosítás nyugdíjcélú megtakarítási lehetőség. A befizetett díj 20 százalékával megegyező, maximum évi 130 ezer forintos adójóváírás vehető igénybe. A tartalom termékfókuszú, döntési összehasonlítást csak korlátozottan ad."
+  },
+  {
+    "id": "current-health-passport",
+    "title": "Egészség Útlevél egészségbiztosítás",
+    "type": "product_page",
+    "pillar": "Clarity",
+    "source_url": "https://www.nn.hu/egeszsegbiztositas/egeszseg-utlevel/miert-eri-meg-onnek",
+    "tags": ["egészségbiztosítás", "Egészség Útlevél", "külföldi gyógykezelés", "2 millió euró"],
+    "body": "Az Egészség Útlevél egészségbiztosítás online is köthető, és korszerű gyógykezelés lehetőségét kínálja külföldön, meghatározott betegségek esetére, 2 millió euróig. Az oldal online megkötést, kapcsolatfelvételt és egyéni díjkalkulációt említ, de a forrás inkább termékbemutató, mint külön döntési kalkulátor."
+  },
+  {
+    "id": "current-pension-calculator",
+    "title": "NN Nyugdíjkalkulátor",
+    "type": "calculator",
+    "pillar": "Actionability",
+    "source_url": "https://www.nn.hu/nyugdijkalkulator",
+    "tags": ["nyugdíjkalkulátor", "nyugdíj", "kieső bevétel", "Motiva", "kalkulátor"],
+    "body": "Az NN nyugdíjkalkulátora életkor, nem, nettó jövedelem és havi megtakarítás alapján becsli a várható havi öregségi nyugdíjat, a kieső bevételt és a Motiva garantált nyugdíjbiztosítással elérhető becsült összeget. Ez meglévő, linkelhető NN next-step asset."
+  },
+  {
+    "id": "current-market-generic",
+    "title": "Általános magyar biztosítási piac - listázó kontextus",
+    "type": "third_party_light",
+    "pillar": "Credibility",
+    "source_url": "local-current-market-snapshot",
+    "tags": ["NN", "Generali", "UNIQA", "Allianz", "összehasonlítás"],
+    "body": "A magyar biztosítási piacon az NN, Generali, UNIQA és Allianz gyakran együtt jelenik meg listákban és összehasonlításokban. A jelenlegi kontextus NN-t erős szereplőként említi, de kevés termékszintű részletet és kevés független bizonyítékot ad."
+  },
+  {
+    "id": "current-review-gap",
+    "title": "Review és összehasonlító ökoszisztéma - gyenge jelenlegi jel",
+    "type": "credibility_gap",
+    "pillar": "Credibility",
+    "source_url": "local-current-review-gap",
+    "tags": ["Trustpilot", "Netrisk", "Biztositas.hu", "külső forrás", "hitelesség"],
+    "body": "A technikai audit alapján a review és összehasonlító ökoszisztéma nem tűnik aktívan menedzseltnek. A külső bizonyíték szerepe különösen rangsoroló és összehasonlító AI promptoknál fontos, de a jelenlegi kontrollált korpuszban ez gyenge jel."
+  },
+  {
+    "id": "current-technical-gaps",
+    "title": "Technikai GEO audit - jelenlegi hiányosságok",
+    "type": "technical_audit",
+    "pillar": "Discoverability",
+    "source_url": "local-audit-summary",
+    "tags": ["schema", "sameAs", "Wikidata", "FAQPage", "llms.txt", "IndexNow"],
+    "body": "Az audit szerint robots.txt és sitemap alapvetően létezik, de az Organization schema minimális, sameAs linkek és Wikidata bejegyzés hiányoznak, a FAQPage strukturált Q&A gyenge, IndexNow nincs implementálva, az llms.txt pedig csak alacsony prioritású pilot lehetne."
+  }
+]

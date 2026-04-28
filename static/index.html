@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NN GEO Controlled RAG Benchmark</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Deloitte Consulting Course Demo</p>
+        <h1>NN GEO Controlled RAG Benchmark</h1>
+      </div>
+      <div class="claim">
+        Controlled simulation. Not a claim about live public model rankings.
+      </div>
+    </header>
+
+    <main>
+      <section class="toolbar" aria-label="Benchmark controls">
+        <label class="field">
+          <span>Prompt</span>
+          <select id="promptSelect"></select>
+        </label>
+
+        <div class="field provider-field">
+          <span>Models</span>
+          <div id="modelChecks" class="checks"></div>
+        </div>
+
+        <label class="toggle">
+          <input id="liveToggle" type="checkbox">
+          <span>Use provider APIs</span>
+        </label>
+
+        <div class="actions">
+          <button id="cachedButton" type="button">Cached Demo</button>
+          <button id="runPromptButton" type="button">Run Prompt</button>
+          <button id="runFullButton" type="button">Run Full Benchmark</button>
+        </div>
+      </section>
+
+      <section class="status-band">
+        <div id="statusText">Loading demo...</div>
+        <div id="providerStatus" class="provider-status"></div>
+      </section>
+
+      <section class="metric-grid" aria-label="Benchmark summary">
+        <div class="metric">
+          <span>Current GEO score</span>
+          <strong id="currentAvg">0</strong>
+        </div>
+        <div class="metric">
+          <span>Improved GEO score</span>
+          <strong id="improvedAvg">0</strong>
+        </div>
+        <div class="metric accent">
+          <span>Average lift</span>
+          <strong id="deltaAvg">0</strong>
+        </div>
+        <div class="metric">
+          <span>Improved cases</span>
+          <strong id="improvedPairs">0/0</strong>
+        </div>
+        <div class="metric link-metric">
+          <span>NN link recommendations</span>
+          <strong id="nnLinks">0 → 0</strong>
+        </div>
+      </section>
+
+      <section class="split">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Slide-ready Summary</h2>
+            <span class="small">Average score by model</span>
+          </div>
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Current</th>
+                <th>Improved</th>
+                <th>Lift</th>
+              </tr>
+            </thead>
+            <tbody id="modelSummary"></tbody>
+          </table>
+        </div>
+
+        <div class="panel visual-panel">
+          <div class="panel-head">
+            <h2>GEO Impact View</h2>
+            <span class="small">Before vs after</span>
+          </div>
+          <div id="impactBars" class="impact-bars"></div>
+        </div>
+      </section>
+
+      <section class="comparison">
+        <div class="panel-head">
+          <div>
+            <h2>Before / After Answers</h2>
+            <p id="selectedPromptText" class="prompt-text"></p>
+          </div>
+          <span id="resultCount" class="small"></span>
+        </div>
+        <div id="answerGrid" class="answer-grid"></div>
+      </section>
+
+      <section class="source-section">
+        <div class="panel-head">
+          <h2>Retrieved Source Evidence</h2>
+          <span class="small">Top local sources used for the selected prompt</span>
+        </div>
+        <div id="sourceEvidence" class="source-list"></div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
