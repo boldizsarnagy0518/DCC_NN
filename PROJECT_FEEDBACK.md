@@ -1,519 +1,439 @@
-# Project Feedback — NN GenAI Visibility / GEO Dashboard
+# Project Feedback — NN GEO Recommendation Impact POC
 
 ## 1. Executive summary
 
-The project is directionally strong and fits the NN GenAI Visibility / GEO case well. It already has a clear strategic logic: NN should move from simply being mentioned by GenAI systems toward being easier to find, understand, cite and recommend as the next step.
+The project should be positioned primarily as a **recommendation validation proof-of-concept**, not as a real-time public web visibility tracker.
 
-However, the current implementation should not be positioned as a full real-world web-based AI visibility measurement tool yet. In its current form, it is primarily a **controlled GEO / RAG simulation dashboard**.
+NN's strategic goal is to increase its relevance and visibility in the GenAI search era: when users ask ChatGPT, Gemini, Claude, Perplexity or AI Overviews about insurance, NN should be easier to find, understand, trust, cite and recommend as a next step.
 
-The most important point:
+The team created actionable recommendations for this goal. The dashboard should validate these recommendations through a controlled before/after mockup:
 
-> The current dashboard demonstrates how better structured NN source assets can improve model answer quality in a controlled source environment. It does not yet measure how public AI systems search, retrieve and cite NN from the live web.
+1. **Without recommendation mockups**  
+   The model receives a current-like NN/public source environment with weaker Q&A, credibility and next-step signals.
 
-This is not a failure. It is a good proof-of-concept. But the positioning, UI labels, methodology note and future roadmap should make the distinction clear.
+2. **With recommendation mockups**  
+   The model receives additional mocked GEO assets based on the recommendations: conversational Q&A pages, decision guides, calculators, original research, entity signals and third-party proof.
 
----
+The key validation question is:
 
-## 2. Current project positioning
+> If NN implemented the recommended GEO assets, would GenAI-style answers become more specific, more credible and more actionable for users?
 
-### What the project currently does well
+This is the strongest framing for the current project.
 
-The project compares two source environments:
-
-1. **Current corpus**  
-   A today-like set of NN/public content with weaker Q&A, link and credibility signals.
-
-2. **Improved corpus**  
-   Mocked future GEO assets based on the recommendations: product Q&A pages, decision guides, original research, entity/schema improvements, third-party proof and calculators.
-
-The dashboard then runs prompts against these two source environments and measures whether answers become more specific, more credible and more actionable.
-
-This fits the strategic message:
-
-> NN is already visible in AI answers. The opportunity is to make that visibility more product-specific, trusted and actionable.
-
-### What the project does not yet do
-
-The current project does **not** yet perform true real-time web visibility measurement.
-
-It does not currently answer questions such as:
-
-- Does ChatGPT browse the live web and find NN?
-- Does Gemini use Google Search grounding and cite NN?
-- Does Claude retrieve NN from public web sources?
-- Which live third-party sources are currently influencing AI answers?
-- Where does NN appear compared with competitors in real web-grounded outputs?
-
-The current model API calls receive a controlled prompt and controlled source package. They do not independently browse the public web.
+The project does **not need paid websearch APIs** for this use case. Live websearch would be useful for a future monitoring product, but the current POC is about isolating the impact of the recommended assets. A controlled setup is therefore a feature, not a weakness.
 
 ---
 
-## 3. Main methodological risk
+## 2. Correct use-case framing
 
-The biggest risk is that the dashboard can look like a real public AI visibility benchmark even though the current implementation is a controlled simulation.
+### Primary use case
 
-This could create a credibility issue if a reviewer, client or evaluator asks:
+The dashboard validates whether the team's actionable recommendations could improve GenAI answer quality.
 
-> Are these answers based on real ChatGPT/Gemini/Claude web search behavior?
+It does this by keeping the prompt and model constant while changing the available source environment:
 
-The honest answer today is:
+```text
+Same user prompt
++ same model / model label
++ current-like source environment
+= baseline answer
 
-> Not fully. The dashboard uses model APIs with controlled source inputs. It measures controlled answer quality, not live public web visibility.
+Same user prompt
++ same model / model label
++ current-like source environment + recommendation mockup assets
+= improved answer
+```
 
-This should be handled proactively in the UI and presentation.
+Then the dashboard compares the two answers across:
+
+- mention quality;
+- product specificity;
+- credibility;
+- actionability;
+- explicit NN next-step links;
+- prompt-level coverage;
+- source/domain mix;
+- competitor mentions.
+
+### What this validates
+
+The POC validates whether the proposed assets make NN easier for GenAI systems to use in answers.
+
+It is especially useful for validating recommendations such as:
+
+- rebuilding product pages around conversational search;
+- creating structured Q&A blocks;
+- strengthening machine-readable identity;
+- building third-party credibility signals;
+- publishing original AI-finance research;
+- creating decision-guide pages;
+- launching public calculators;
+- making NN links and next steps easier to recommend.
+
+### What this does not try to prove
+
+The POC does not claim that public ChatGPT, Gemini or Claude will immediately rank NN higher on the live web.
+
+It does not try to reproduce the full public GenAI ecosystem.
+
+It does not need to crawl the entire web.
+
+The point is narrower and more defensible:
+
+> Under controlled conditions, the recommended GEO assets improve the quality and actionability of AI-style answers.
 
 ---
 
-## 4. Recommended positioning
+## 3. Why websearch is not necessary for the current POC
 
-### Better title options
+Paid websearch APIs are not required for the current recommendation validation use case.
 
-Avoid titles that overclaim real-world measurement, such as:
+The reason is methodological: the POC should isolate the effect of the recommendation mockups.
 
-- AI Visibility Benchmark
-- Real GenAI Ranking Dashboard
-- Public AI Visibility Tracker
+If live websearch is added too early, several uncontrolled factors enter the test:
 
-Better title options:
+- changing search results;
+- changing model retrieval behavior;
+- ranking noise;
+- competitor page changes;
+- inconsistent citations;
+- API-specific search behavior;
+- cost and rate limits.
 
-- Controlled GEO Simulation Dashboard
-- NN GenAI Source Readiness Demo
-- AI Visibility Improvement Simulator
-- Controlled AI Answer Quality Benchmark
-- From Visibility Baseline to Actionable AI Presence
+That would make it harder to show whether the improvement came from NN's recommended assets or from random live-web variation.
+
+For this project, the better logic is:
+
+```text
+Controlled source environment
+→ controlled before/after comparison
+→ recommendation impact validation
+```
+
+Future websearch can be mentioned as a possible extension, but it should not be the core requirement for the POC.
+
+---
+
+## 4. Recommended project positioning
+
+### Best title options
+
+Recommended titles:
+
+- NN GEO Recommendation Impact POC
+- NN GEO Recommendation Validation Dashboard
+- Before / After GEO Asset Impact Simulator
+- GenAI Recommendation Impact Simulator
+- NN GenAI Answer Quality Improvement Demo
+
+Best option:
+
+> NN GEO Recommendation Impact Simulator
+
+This title clearly communicates that the dashboard validates the expected impact of the recommendations, rather than claiming to measure the entire live web.
+
+### Recommended one-sentence description
+
+> This POC validates the potential impact of NN's actionable GEO recommendations by comparing GenAI-style answers before and after adding mocked recommendation assets.
 
 ### Recommended methodology statement
 
-Add this near the top of the dashboard and possibly into the README:
+Add this near the top of the dashboard and README:
 
-> This dashboard compares model responses using controlled source corpora. In live mode, provider APIs receive the same controlled source package. The models do not browse the web in this demo. The results show how better structured NN assets can improve answer specificity, credibility and actionability.
+> This dashboard validates the potential impact of NN's actionable GEO recommendations through a controlled before/after mockup. The same prompts are tested without and with mocked recommendation assets, while model settings and scoring logic remain constant. The goal is to isolate whether the proposed assets can make GenAI-style answers more specific, credible and actionable.
 
 Hungarian version:
 
-> Ez a dashboard kontrollált forráskörnyezetben hasonlítja össze a modellválaszokat. Live módban az API-n meghívott modellek ugyanazt a kontrollált forráscsomagot kapják meg. A modellek ebben a demóban nem végeznek webes keresést. Az eredmények azt mutatják meg, hogy a jobb struktúrájú NN assetek hogyan javíthatják a válaszok konkrétságát, hitelességét és actionability értékét.
+> Ez a dashboard az NN-nek javasolt actionable GEO ajánlások potenciális hatását validálja kontrollált before/after mockup segítségével. Ugyanazokat a promptokat futtatjuk le mockup assetek nélkül és mockup assetekkel, miközben a modell és a scoring logika változatlan. A cél annak izolált bemutatása, hogy az ajánlott assetek konkrétabbá, hitelesebbé és actionable-bbé tehetik-e a GenAI válaszokat.
 
 ---
 
-## 5. What is good in the current implementation
+## 5. Recommended before/after terminology
 
-### 5.1 Strong strategic alignment
+The current `current` vs `improved` corpus terminology is technically fine, but the UI and presentation should use more business-friendly wording.
 
-The code reflects the core consulting framework well:
+Recommended wording:
 
-- Discoverability
-- Clarity
-- Credibility
-- Actionability
-
-The scoring system uses dimensions that are aligned with the case logic:
-
-- mention quality
-- product specificity
-- credibility
-- actionability
-
-This is good because the project does not only count mentions. It tries to evaluate whether NN is mentioned in a useful, specific and business-relevant way.
-
-### 5.2 Good before/after storytelling
-
-The current vs improved corpus structure is useful for presentation.
-
-It helps show:
-
-- where NN is today;
-- what improved GEO assets could look like;
-- how better source material can lead to stronger AI-generated answers;
-- why actionability matters beyond simple visibility.
-
-### 5.3 Simple and explainable technical design
-
-The retrieval logic is simple enough to explain in a business presentation. It does not rely on complex vector databases, LangChain chains or hidden infrastructure.
-
-This is good for a Deloitte Consulting Course project because the audience likely cares more about strategic interpretation than deep technical implementation.
-
-### 5.4 Useful fallback behavior
-
-The API fallback to mock output is useful for demo stability.
-
-If an API key is missing or a provider call fails, the dashboard still works. This reduces presentation risk.
-
-However, the fallback behavior should be clearly shown in the UI.
-
----
-
-## 6. Key limitations to fix or clarify
-
-### 6.1 No live web search in provider calls
-
-The current OpenAI, Gemini and Claude calls are standard text generation calls. They do not include web search tools, browser tools or search grounding.
-
-This means the models answer based on the prompt and controlled sources passed into them.
-
-Impact:
-
-- Good for controlled source simulation.
-- Not enough for real web-based AI visibility measurement.
-
-Recommended fix:
-
-Add a separate **real web check mode** or clearly label the existing mode as controlled simulation.
-
----
-
-### 6.2 Mock answers can be confused with real model answers
-
-The mock output currently imitates model-specific styles:
-
-- OpenAI-style short answer
-- Gemini-style comparison answer
-- Claude-style cautious decision-support answer
-
-This is useful for demo stability, but it can be misleading if the UI does not clearly mark these as mock outputs.
-
-Recommended fix:
-
-Display a visible badge for every answer:
-
-- `Mode: API`
-- `Mode: Mock fallback`
-- `Mode: Cached result`
-
-If mock mode is used, the model label should be phrased carefully:
-
-- `OpenAI-style mock`
-- `Gemini-style mock`
-- `Claude-style mock`
-
-Instead of suggesting they are actual live provider outputs.
-
----
-
-### 6.3 The score favors the improved corpus by design
-
-The scoring system gives points for source types such as:
-
-- product Q&A
-- decision guide
-- calculator
-- research
-- third-party source
-- entity source
-
-This is logical because these are exactly the types of assets the recommendations propose. However, it means the improved corpus is structurally designed to score better.
-
-This is acceptable if framed as:
-
-> A controlled demonstration of how improved GEO assets affect answer quality.
-
-It is less acceptable if framed as:
-
-> Proof that public AI systems will rank NN higher.
-
-Recommended fix:
-
-Rename the score from something like `GEO score` to one of the following:
-
-- Controlled GEO Readiness Score
-- Answer Quality Score
-- Source Readiness Score
-- Controlled GEO Asset Impact Score
-
----
-
-### 6.4 Provider API run message may be misleading
-
-The UI currently communicates provider runs as completed when live mode is used. But if some providers fail, the system can fall back to mock output.
-
-Recommended fix:
-
-Show provider-level run status:
-
-| Provider | Status |
+| Technical term | Presentation term |
 |---|---|
-| OpenAI | API |
-| Gemini | API |
-| Claude | Mock fallback |
+| Current corpus | Without recommendation mockups |
+| Improved corpus | With recommendation mockups |
+| Controlled GEO Readiness Score | Recommendation impact / answer quality score |
+| Source environment | Available GenAI source assets |
+| Mocked future asset | Recommendation mockup asset |
 
-Also update the status message:
+Suggested dashboard labels:
 
-> Provider run completed. Some answers may use mock fallback.
+- **Without recommendation mockups**
+- **With recommendation mockups**
+- **Answer quality lift**
+- **Recommendation impact score**
+- **NN next-step recommendations**
 
----
-
-### 6.5 The dashboard should distinguish current, improved and simulated future assets
-
-The improved corpus includes mocked future assets. This is fine, but it should be clear that they are not necessarily live NN assets today.
-
-Recommended fix:
-
-Add source status metadata:
-
-- `current_live_like`
-- `mocked_future_asset`
-- `third_party_example`
-- `technical_audit_signal`
-
-Then display this in the source evidence cards.
+This makes the POC logic clearer for a consulting audience.
 
 ---
 
-## 7. Recommended improvement roadmap
+## 6. What is strong in the current implementation
 
-## Phase 1 — Clarify positioning and avoid overclaiming
+### 6.1 The current vs improved corpus logic matches the POC goal
 
-Priority: High  
-Effort: Low  
-Recommended timing: Immediately
+The dashboard already compares a current-like source environment against a source environment enriched with mocked recommendation assets.
 
-### Tasks
+This is exactly what is needed to validate the recommendations.
 
-- Add methodology note to the dashboard.
-- Rename dashboard title to reflect controlled simulation.
-- Rename `GEO score` to `Controlled GEO Readiness Score` or `Answer Quality Score`.
-- Add answer mode badges: API / mock fallback / cached.
-- Add source status labels: current-like vs mocked future asset.
-- Update README to clearly explain what the dashboard measures and what it does not measure.
+### 6.2 The scoring dimensions fit the strategy
 
-### Why this matters
+The scoring categories align well with the GenAI visibility strategy:
 
-This protects the credibility of the project. The current dashboard is valuable, but only if its methodology is transparent.
+- **Mention quality:** Is NN mentioned clearly and usefully?
+- **Product specificity:** Is NN connected to concrete products or decision situations?
+- **Credibility:** Is the answer supported by citations, credible source types or entity signals?
+- **Actionability:** Does the answer guide the user toward a next step?
 
----
+This supports the key message that NN should not only be mentioned by AI systems, but become easier to cite and recommend.
 
-## Phase 2 — Improve the dashboard UX and interpretation
+### 6.3 The dashboard already shows business-relevant outputs
 
-Priority: Medium to high  
-Effort: Medium  
-Recommended timing: Before final presentation if possible
+Useful elements already present or recently added:
 
-### Tasks
+- before/after score comparison;
+- NN mention and link counts;
+- prompt-level coverage;
+- actionability / next-step destination mix;
+- recommendation coverage;
+- source domain mix;
+- competitor mention check;
+- API vs mock fallback labels;
+- CSV export.
 
-- Add a small methodology box at the top of the UI.
-- Add a section called `How to read this dashboard`.
-- Add clearer KPI definitions:
-  - Mention quality
-  - Product specificity
-  - Credibility
-  - Actionability
-  - NN link recommendation
-- Show provider status per model.
-- Show whether each answer came from API or fallback.
-- Add a short explanation below the current vs improved score.
+These make the POC more credible and easier to explain.
 
-### Suggested UI copy
+### 6.4 The controlled setup is useful
 
-> Current corpus represents today-like available NN/public content. Improved corpus represents mocked future GEO assets based on the recommendations. The score shows answer quality in a controlled source environment, not real-time public web ranking.
+For this POC, controlled sources are an advantage because they isolate the effect of the recommendation assets.
+
+The question is not whether the whole internet currently supports NN well. The question is whether the recommended assets would be useful if NN created them.
 
 ---
 
-## Phase 3 — Add real web visibility check mode
+## 7. Key clarifications still needed
 
-Priority: High if the goal is real AI visibility measurement  
-Effort: Medium to high  
-Recommended timing: Next development step
+### 7.1 The primary goal should be recommendation validation, not future web tracking
 
-### Goal
+The README currently mentions future real web visibility measurement. This can remain as a future extension, but it should not dominate the methodology section.
 
-Add a new mode that uses live web search or search-grounded APIs.
+Recommended hierarchy:
 
-### Recommended architecture
+1. Primary: recommendation impact validation POC.
+2. Secondary: future real web visibility monitoring extension.
+
+### 7.2 The dashboard should explain why no websearch is used
+
+Instead of apologizing for not using websearch, explain the design choice:
+
+> Websearch is intentionally not used in the core POC because the goal is to isolate the effect of the recommendation mockup assets.
+
+This turns a potential weakness into a methodological strength.
+
+### 7.3 The improved corpus should be explicitly tied to recommendations
+
+Each mocked asset should map to one or more recommendations.
+
+Example mapping:
+
+| Recommendation | Mockup asset | Expected validation signal |
+|---|---|---|
+| Conversational product pages | Product Q&A mock pages | Higher product specificity |
+| Machine-readable identity | Entity/schema mock | Higher credibility |
+| Technical hygiene | Technical audit signal | Better discoverability explanation |
+| AI visibility dashboard | Dashboard itself | Measurement/governance signal |
+| Third-party credibility | Review/comparison/media mock | Higher credibility |
+| Original research | AI-finance research mock | Higher citation potential |
+| Decision-guide pages | Decision guide mock | Higher clarity and actionability |
+| Calculators | Calculator mock assets | More next-step links |
+| Personalization | Future next-best-action mock | Higher actionability/conversion narrative |
+
+### 7.4 The result should be presented as validation evidence, not proof
+
+Use words like:
+
+- indicates;
+- suggests;
+- demonstrates under controlled conditions;
+- validates the direction of the recommendation;
+- supports the business case.
+
+Avoid:
+
+- proves public AI ranking improvement;
+- guarantees citation;
+- guarantees conversion;
+- measures live AI search share-of-voice.
+
+---
+
+## 8. Recommended UI changes
+
+### Must-have wording updates
+
+Change the dashboard framing from:
 
 ```text
-Prompt
-→ Web Search API
-→ Top results / snippets / URLs
-→ Optional page content extraction
-→ LLM synthesis
-→ NN mention/link/citation scoring
-→ Dashboard output
+Controlled GEO Simulation Dashboard
 ```
 
-### Possible search options
+To one of:
 
-- Serper API
-- Tavily API
-- Bing Web Search API
-- Google Custom Search API
-- Gemini with Google Search grounding
-- OpenAI Responses API with web search tool, if available and configured
-- Claude with external search API + tool-use wrapper
+```text
+NN GEO Recommendation Impact POC
+NN GEO Recommendation Validation Dashboard
+NN GEO Recommendation Impact Simulator
+```
 
-### What to measure
+Recommended:
 
-For each prompt:
+```text
+NN GEO Recommendation Impact Simulator
+```
 
-- Is NN mentioned?
-- Is NN linked?
-- Which NN page is linked?
-- Is the answer product-specific?
-- Are competitors mentioned?
-- Which third-party sources appear?
-- Does the answer recommend a next step?
-- Does it cite or rely on NN-owned sources or external sources?
+### Change methodology box
 
-### Why this matters
+Current style is mostly correct, but should focus more on recommendation validation.
 
-This would move the project from a controlled simulation toward a more realistic GenAI visibility monitoring tool.
+Suggested copy:
 
----
+```text
+This POC validates NN's actionable GEO recommendations through a controlled before/after mockup. The same prompts are tested without and with recommendation mockup assets. The goal is to isolate whether these assets can make GenAI-style answers more specific, credible and actionable.
+```
 
-## Phase 4 — Add competitor and source-level benchmarking
+Add a second sentence:
 
-Priority: Medium  
-Effort: Medium
+```text
+Websearch is intentionally not used in the core POC, because the purpose is to isolate the impact of the proposed NN assets rather than measure live public ranking noise.
+```
 
-### Tasks
+### Change before/after labels
 
-- Track competitors such as UNIQA, Generali, Allianz and Groupama.
-- Count competitor mentions.
-- Track whether NN is mentioned before or after competitors.
-- Track source domains:
-  - nn.hu
-  - competitor domains
-  - comparison sites
-  - review platforms
-  - financial media
-  - regulatory / MNB sources
-- Add share-of-voice metrics.
+Recommended UI labels:
 
-### Suggested metrics
+```text
+Without recommendation mockups
+With recommendation mockups
+```
 
-- NN mention rate
-- NN link rate
-- NN first-mentioned rate
-- competitor mention count
-- owned-source citation rate
-- third-party-source citation rate
-- actionability rate
+Instead of only:
 
----
+```text
+Before mockup
+After mockup
+```
 
-## Phase 5 — Make the scoring more transparent and robust
+### Change KPI labels
 
-Priority: Medium  
-Effort: Medium
+Recommended KPI labels:
 
-### Current issue
+- Recommendation impact score
+- Answer quality lift
+- NN next-step recommendations
+- Prompt coverage with NN mention
+- Prompt coverage with NN link
 
-The scoring is heuristic and keyword-based. This is fine for a demo, but it should be transparent.
+Avoid overly broad labels like:
 
-### Recommended improvements
-
-- Add a scoring methodology section to the README.
-- Display score breakdown definitions in the UI.
-- Add optional manual review fields.
-- Export results to CSV/JSON for auditability.
-- Save prompt, provider, source list, response, score and timestamp.
-- Consider a human validation step for final benchmark results.
-
-### Recommended scoring categories
-
-Keep the current four categories, but explain them clearly:
-
-1. **Mention quality**  
-   Does the answer mention NN clearly and usefully?
-
-2. **Product specificity**  
-   Does the answer connect NN to actual products, customer needs or decision contexts?
-
-3. **Credibility**  
-   Does the answer rely on source evidence, citations or trusted external proof?
-
-4. **Actionability**  
-   Does the answer guide the user toward a clear next step such as a calculator, guide, quote request or advisor contact?
+- real AI ranking;
+- public AI visibility score;
+- guaranteed GEO lift.
 
 ---
 
-## 8. Recommended README addition
+## 9. Recommended README update
 
-Add a section like this:
+Replace the current methodology emphasis with this:
 
 ```markdown
 ## Methodology note
 
-This dashboard has two intended use cases:
+This dashboard is a recommendation impact POC for NN's GenAI / GEO strategy.
 
-1. Controlled GEO simulation  
-   The current implementation compares model responses using controlled source corpora. It shows how improved NN assets can make answers more specific, credible and actionable.
+The goal is to validate whether the actionable recommendations could improve GenAI-style answer quality. The dashboard compares two controlled source environments:
 
-2. Future real web visibility measurement  
-   A future version can add web search or search-grounded APIs to measure how AI systems retrieve, cite and recommend NN from live public web sources.
+1. **Without recommendation mockups**  
+   A current-like NN/public source environment with weaker Q&A, credibility and next-step signals.
 
-The current implementation should not be interpreted as a direct measurement of public ChatGPT, Gemini or Claude rankings. It is a controlled source-readiness and answer-quality demo.
+2. **With recommendation mockups**  
+   The same environment enriched with mocked GEO assets based on the recommendations, such as product Q&A pages, decision guides, calculators, original research, entity signals and third-party proof.
+
+The same prompts and model labels are used in both runs. This isolates the effect of the recommendation assets.
+
+The dashboard does not claim to measure live public ChatGPT/Gemini/Claude rankings. Websearch is intentionally not required for the core POC, because the goal is recommendation validation under controlled conditions. A future version could add live web visibility monitoring as a separate extension.
 ```
 
 ---
 
-## 9. Recommended dashboard copy
+## 10. Suggested presentation explanation
 
-### Top methodology box
+### English version
 
-```text
-Methodology note: This dashboard is a controlled GEO simulation. The current and improved corpora are predefined source environments. Provider APIs, when enabled, receive these controlled sources and do not browse the public web in this version. The score measures controlled answer quality, not live public AI ranking.
-```
+> We built this POC to validate our actionable recommendations. The baseline run uses a current-like NN source environment. The mockup run adds the GEO assets we recommend NN should build, such as conversational Q&A pages, calculators, decision guides, entity signals and third-party proof. By keeping the prompts and model setup constant, we isolate whether these recommendations improve answer quality, credibility and actionability.
 
-### Live mode note
+### Hungarian version
 
-```text
-Live API mode calls provider models with the controlled source package. It does not automatically enable web search or browsing.
-```
+> A POC célja az ajánlásaink validálása. Az első futás egy jelenlegi NN-szerű forráskörnyezetet használ. A második futás hozzáadja azokat a GEO mockup asseteket, amelyeket NN-nek javaslunk megépíteni: például Q&A oldalakat, kalkulátorokat, decision guide-okat, entity signalokat és külső hitelességi forrásokat. Mivel a promptok és a modellsetup ugyanaz marad, izoláltan tudjuk megmutatni, hogy ezek az ajánlások javítják-e a válaszok minőségét, hitelességét és actionability-jét.
 
-### Mock mode note
+### Short version for slide narration
 
-```text
-Mock mode uses deterministic local fallback responses for demo stability. These are not real provider outputs.
-```
+> We are not trying to recreate the whole public web. We are validating whether the recommended NN assets would make GenAI answers better under controlled conditions.
 
-### Improved corpus note
+Hungarian:
 
-```text
-The improved corpus represents mocked future GEO assets based on the recommended roadmap, not necessarily assets that are already live today.
-```
+> Nem a teljes publikus webet próbáljuk újramodellezni. Azt validáljuk, hogy az ajánlott NN assetek kontrollált környezetben javítanák-e a GenAI válaszokat.
 
 ---
 
-## 10. Suggested backlog
+## 11. Recommended backlog
 
-### Must-have before presenting
+### Must-have before presentation
 
-- [ ] Add methodology note to dashboard.
-- [ ] Rename score to `Controlled GEO Readiness Score` or `Answer Quality Score`.
-- [ ] Show API vs mock fallback for each answer.
-- [ ] Clarify that provider APIs do not browse the web.
-- [ ] Clarify that improved assets are simulated future assets.
-- [ ] Update README with methodology note.
+- [ ] Reframe the README around `recommendation impact POC` as the primary use case.
+- [ ] Rename the dashboard title to `NN GEO Recommendation Impact Simulator` or similar.
+- [ ] Change before/after labels to `Without recommendation mockups` and `With recommendation mockups`.
+- [ ] Add one explicit sentence explaining that websearch is intentionally not used because the goal is to isolate mockup asset impact.
+- [ ] Make the recommendation-to-mockup-asset mapping visible in the dashboard.
+- [ ] Keep API vs mock fallback badges.
+- [ ] Keep source status labels.
+- [ ] Keep CSV export.
 
 ### Should-have
 
-- [ ] Add provider-level status table.
-- [ ] Add source status labels.
-- [ ] Add KPI definitions.
-- [ ] Export benchmark results to CSV.
-- [ ] Add competitor mention tracking.
-- [ ] Add domain/source-type breakdown.
+- [ ] Add `Validation hypothesis` text for each recommendation.
+- [ ] Add `Expected signal` for each recommendation, for example product specificity, credibility or actionability.
+- [ ] Rename `Average GEO lift` to `Answer quality lift` or `Recommendation impact lift`.
+- [ ] Rename live toggle to `Use provider APIs with controlled sources`.
+- [ ] Add a short `What this POC validates` section near the top of the UI.
 
-### Future development
+### Future extension only
 
-- [ ] Add real web search mode.
-- [ ] Integrate Serper/Tavily/Bing/Google Custom Search.
-- [ ] Add Gemini Google Search grounding if available.
-- [ ] Add OpenAI web search tool integration if available.
-- [ ] Add source extraction from live pages.
-- [ ] Add recurring benchmark runs.
-- [ ] Add trend tracking over time.
+- [ ] Add real web visibility monitoring mode.
+- [ ] Add websearch or search-grounded APIs.
+- [ ] Add recurring public AI visibility tracking.
+- [ ] Add live citation/source monitoring.
+- [ ] Add time-series tracking.
+
+These future items are useful, but they are not required for the current recommendation validation POC.
 
 ---
 
-## 11. Final recommendation
+## 12. Final recommendation
 
-The current project should be presented as a **strong controlled demo**, not as a full real-world AI visibility tracker.
+The project should be presented as a **GEO recommendation impact simulator**.
 
 Best framing:
 
-> This dashboard demonstrates how improved GEO assets can make AI-generated answers more specific, credible and actionable in a controlled source environment. It is a practical simulation of the strategic recommendation logic. A future version can extend this into real web-based AI visibility tracking by adding search-grounded APIs and live source retrieval.
+> This POC validates whether NN's actionable GEO recommendations could improve GenAI-style answers. It compares the same prompts without and with recommendation mockup assets, then measures whether answers become more specific, credible and actionable.
 
-This framing is honest, defensible and still valuable for the NN case.
+This is honest, defensible and directly aligned with the business problem.
 
 The strategic story remains strong:
 
-> NN should not only aim to be mentioned by AI systems. NN should become easier for AI systems to find, understand, trust, cite and recommend as the next step.
+> NN should not only aim to be mentioned by AI systems. NN should build the assets that make it easier for AI systems to find, understand, trust, cite and recommend NN as the next step.
