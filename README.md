@@ -1,25 +1,33 @@
-# DCC_NN
+# NN GEO Recommendation Impact Simulator
 
-Local controlled RAG demo for the NN GenAI visibility / GEO case.
+Recommendation impact POC for the NN GenAI visibility / GEO case.
 
-The dashboard compares two controlled source environments:
+The dashboard validates whether NN's actionable GEO recommendations could improve GenAI-style answer quality. It compares two controlled source environments:
 
-- **Current corpus:** today-like NN/public content with weaker Q&A, link and credibility signals.
-- **Improved corpus:** mocked GEO assets based on the actionable recommendations: Q&A product pages, decision guides, original research, third-party proof, calculators and explicit next-step links.
+- **Without recommendation mockups:** a current-like NN/public source environment with weaker Q&A, credibility and next-step signals.
+- **With recommendation mockups:** the same environment enriched with mocked GEO assets based on the recommendations: Q&A product pages, decision guides, original research, third-party proof, calculators, entity signals and explicit next-step links.
 
-The point of the demo is not to prove that public ChatGPT/Gemini/Claude rankings immediately change. It shows that when better source assets are available to retrieval, model answers become more specific, more citable and more actionable.
+The key question is:
+
+```text
+If NN implemented the recommended GEO assets, would GenAI-style answers become more specific, more credible and more actionable for users?
+```
 
 ## Methodology Note
 
-This dashboard has two intended use cases:
+This dashboard is a recommendation impact POC for NN's GenAI / GEO strategy.
 
-1. **Controlled GEO simulation**  
-   The current implementation compares model responses using controlled source corpora. It shows how improved NN assets can make answers more specific, credible and actionable.
+The goal is to validate whether the actionable recommendations could improve GenAI-style answer quality. The dashboard compares two controlled source environments:
 
-2. **Future real web visibility measurement**  
-   A future version can add web search or search-grounded APIs to measure how AI systems retrieve, cite and recommend NN from live public web sources.
+1. **Without recommendation mockups**  
+   A current-like NN/public source environment with weaker Q&A, credibility and next-step signals.
 
-The current implementation should not be interpreted as a direct measurement of public ChatGPT, Gemini or Claude rankings. It is a controlled source-readiness and answer-quality demo.
+2. **With recommendation mockups**  
+   The same environment enriched with mocked GEO assets based on the recommendations, such as product Q&A pages, decision guides, calculators, original research, entity signals and third-party proof.
+
+The same prompts and model labels are used in both runs. This isolates the effect of the recommendation assets.
+
+The dashboard does not claim to measure live public ChatGPT, Gemini or Claude rankings. Websearch is intentionally not required for the core POC, because the goal is recommendation validation under controlled conditions. A future version could add live web visibility monitoring as a separate extension.
 
 In live API mode, provider models receive the same controlled source package. They do not browse the public web in this version.
 
@@ -110,7 +118,7 @@ uv run python generate_responses.py --live
 uv run python dashboard.py --host 127.0.0.1 --port 8765
 ```
 
-In the UI, enable **Use provider APIs** to call the real providers. If a key is missing or an API call fails, the app falls back to local mock output for that provider.
+In the UI, enable **Use provider APIs with controlled sources** to call the real providers. If a key is missing or an API call fails, the app falls back to local mock output for that provider.
 
 You can also set keys directly in PowerShell instead of using `.env`:
 
@@ -141,19 +149,20 @@ For each answer it scores:
 
 The link metric is intentionally separate from mentions. An NN mention is awareness. An NN link recommendation is a stronger acquisition proxy, because the answer sends the user to a product page, calculator, guide, quote path or advisor handoff.
 
+The main score is an **answer quality / recommendation impact score**, not a live public AI ranking score.
+
 ## What You See On The Dashboard
 
 The dashboard is split into two clear views:
 
-- **Before mockup:** results using the current-like source corpus.
-- **After mockup:** results using the mocked GEO recommendation assets.
+- **Without recommendation mockups:** results using the current-like source corpus.
+- **With recommendation mockups:** results using the mocked GEO recommendation assets.
 
 The top of the dashboard shows executive KPIs:
 
-- Current vs improved GEO score.
-- Controlled GEO Readiness Score, not live public AI ranking.
-- Average score lift.
-- NN link recommendations before vs after.
+- Recommendation impact score without and with recommendation mockups.
+- Answer quality lift.
+- NN next-step recommendations before vs after.
 - How many prompts mention NN.
 - How many prompts link to NN.
 - Total NN mentions and total explicit NN links.
@@ -164,7 +173,7 @@ Below that, the dashboard explains why the after-state improves:
 - **Next-step Destination Mix:** what kind of NN asset gets linked, such as calculator, product Q&A, guide, research or entity page.
 - **Source Domain Mix:** which domains or local source groups appear in the retrieved evidence.
 - **Competitor Mention Check:** controlled-answer mentions of UNIQA, Generali, Allianz and Groupama.
-- **Actionable Recommendation Coverage:** how the mocked assets map to the 10 recommendations in the context file.
+- **Actionable Recommendation Coverage:** how the mocked assets map to the 10 recommendations in the context file, including validation hypothesis and expected signal.
 - **Prompt-level Coverage:** which prompts mention NN and which prompts include explicit NN links.
 - **How to Read the KPIs:** short definitions for the scoring categories.
 
@@ -184,17 +193,18 @@ results/latest_results.csv
 
 Each answer shows whether it came from:
 
-- `API · controlled sources`
+- `API - controlled sources`
 - `Mock output`
 - `Mock fallback`
 
 Each source also shows a status label:
 
-- `current live like`
-- `current live asset`
-- `mocked future asset`
-- `third party example`
+- `current-like source`
+- `existing NN asset`
+- `recommendation mockup asset`
+- `third-party example`
 - `technical audit signal`
+- `current market context`
 
 ## Current Demo Assets
 
@@ -216,6 +226,24 @@ The improved corpus adds mocked recommendation assets:
 - Third-party credibility ecosystem.
 - Entity/schema and Wikidata-style identity mock.
 - International and Hungarian competitor benchmark snippets.
+
+## What This POC Validates
+
+The POC validates whether the proposed assets make NN easier for GenAI systems to use in answers:
+
+- Conversational product pages should improve product specificity.
+- Entity/schema mockups should improve credibility and source clarity.
+- Third-party proof should improve comparison and trust signals.
+- Original research should create a citable authority asset.
+- Decision guides should improve clarity and next-step relevance.
+- Calculators should increase explicit NN link recommendations.
+- Personalization and advisor handoff should improve actionability.
+
+This is validation evidence, not a guarantee of live public ranking improvement.
+
+## Future Extension
+
+A later version could add real web visibility monitoring, search-grounded APIs, public citation tracking and time-series reporting. Those are useful extensions, but they are separate from the current recommendation impact POC.
 
 ## API Endpoints
 
@@ -241,4 +269,10 @@ Example `POST /api/run` body:
 
 ## Suggested Presentation Line
 
-NN is already visible in GenAI answers. The opportunity is to make that visibility more actionable: not only being mentioned, but being linked as the next step through calculators, guides, quote paths and advisor handoff.
+This POC validates whether NN's actionable GEO recommendations could improve GenAI-style answers. It compares the same prompts without and with recommendation mockup assets, then measures whether answers become more specific, credible and actionable.
+
+Short Hungarian version:
+
+```text
+Nem a teljes publikus webet próbáljuk újramodellezni. Azt validáljuk, hogy az ajánlott NN assetek kontrollált környezetben javítanák-e a GenAI válaszokat.
+```

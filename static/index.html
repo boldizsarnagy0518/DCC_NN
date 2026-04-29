@@ -3,17 +3,17 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>NN GEO Actionability Dashboard</title>
+    <title>NN GEO Recommendation Impact Simulator</title>
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
     <header class="hero">
       <div class="brand-mark">NN</div>
       <div class="hero-copy">
-        <p class="eyebrow">GenAI Visibility Demo</p>
-        <h1>Controlled GEO Simulation Dashboard</h1>
+        <p class="eyebrow">GenAI Recommendation Validation</p>
+        <h1>NN GEO Recommendation Impact Simulator</h1>
         <p>
-          From being mentioned to being recommended as the next step.
+          Validating whether NN's actionable GEO recommendations make AI-style answers more specific, credible and actionable.
         </p>
       </div>
       <div class="hero-note">
@@ -38,36 +38,53 @@
         <div>
           <h2>Methodology note</h2>
           <p>
-            This dashboard compares model responses using controlled source corpora. Provider APIs, when enabled,
-            receive the same controlled source package and do not browse the public web in this version.
+            This POC validates NN's actionable GEO recommendations through a controlled before/after mockup. The same
+            prompts are tested without and with recommendation mockup assets, while model setup and scoring logic remain constant.
+            Websearch is intentionally not used in the core POC so the impact of the proposed NN assets can be isolated.
           </p>
         </div>
         <div class="methodology-points">
-          <span>Measures controlled answer quality</span>
-          <span>Improved assets are simulated future assets</span>
-          <span>Not a live public AI ranking tracker</span>
+          <span>Primary goal: recommendation impact validation</span>
+          <span>Measures controlled answer quality, not live ranking</span>
+          <span>Mockup assets represent proposed NN recommendations</span>
+        </div>
+      </section>
+
+      <section class="validation-box">
+        <div>
+          <h2>What this POC validates</h2>
+          <p>
+            By keeping prompts and model labels constant, the dashboard isolates whether the proposed Q&A pages,
+            calculators, decision guides, entity signals, original research and third-party proof improve answer quality.
+          </p>
+        </div>
+        <div class="validation-flow">
+          <span>Same prompt</span>
+          <span>Same model setup</span>
+          <span>Different source assets</span>
+          <strong>Recommendation impact</strong>
         </div>
       </section>
 
       <section class="executive-grid" aria-label="Executive KPI summary">
         <article class="kpi-card before">
-          <span>Before mockup</span>
+          <span>Without recommendation mockups</span>
           <strong id="currentAvg">0</strong>
-          <p>Controlled GEO Readiness Score</p>
+          <p>Recommendation impact score</p>
         </article>
         <article class="kpi-card after">
-          <span>After mockup</span>
+          <span>With recommendation mockups</span>
           <strong id="improvedAvg">0</strong>
-          <p>Controlled GEO Readiness Score</p>
+          <p>Recommendation impact score</p>
         </article>
         <article class="kpi-card lift">
-          <span>Average GEO lift</span>
+          <span>Answer quality lift</span>
           <strong id="deltaAvg">0</strong>
           <p>Across selected prompts and models</p>
         </article>
         <article class="kpi-card link">
-          <span>NN link recommendations</span>
-          <strong id="nnLinks">0 → 0</strong>
+          <span>NN next-step recommendations</span>
+          <strong id="nnLinks">0 -> 0</strong>
           <p>Explicit nn.hu next-step links</p>
         </article>
       </section>
@@ -75,8 +92,8 @@
       <section class="two-state">
         <article class="state-card before">
           <div class="state-head">
-            <span class="state-label">Before</span>
-            <h2>Without mocked recommendation assets</h2>
+            <span class="state-label">Baseline</span>
+            <h2>Without recommendation mockups</h2>
           </div>
           <div class="state-metrics">
             <div><strong id="currentMentionPrompts">0/0</strong><span>prompts mention NN</span></div>
@@ -88,8 +105,8 @@
 
         <article class="state-card after">
           <div class="state-head">
-            <span class="state-label">After</span>
-            <h2>Using mocked GEO recommendation assets</h2>
+            <span class="state-label">Mockup run</span>
+            <h2>With recommendation mockups</h2>
           </div>
           <div class="state-metrics">
             <div><strong id="improvedMentionPrompts">0/0</strong><span>prompts mention NN</span></div>
@@ -113,7 +130,7 @@
 
         <label class="toggle">
           <input id="liveToggle" type="checkbox">
-          <span>Use provider APIs for ad-hoc run</span>
+          <span>Use provider APIs with controlled sources</span>
         </label>
 
         <div class="actions">

@@ -6,6 +6,8 @@
     "pillar": "Clarity",
     "priority": "High",
     "demo_signal": "Q&A product pages and extractable answer blocks",
+    "validation_hypothesis": "Conversational product-page mockups should make NN easier to connect to user questions.",
+    "expected_signal": "Higher product specificity and clearer cited answer blocks.",
     "asset_types": ["product_qa"]
   },
   {
@@ -15,6 +17,8 @@
     "pillar": "Discoverability + Credibility",
     "priority": "High",
     "demo_signal": "Entity profile with sameAs / Wikidata-style proof",
+    "validation_hypothesis": "A stronger entity profile should make NN easier to verify and cite as a distinct insurer.",
+    "expected_signal": "Higher credibility score and more entity-source evidence.",
     "asset_types": ["entity"]
   },
   {
@@ -24,6 +28,8 @@
     "pillar": "Discoverability",
     "priority": "Medium-high",
     "demo_signal": "Sitemap, IndexNow, structured-data and llms.txt pilot hygiene",
+    "validation_hypothesis": "Technical hygiene should support discoverability and make source readiness easier to explain.",
+    "expected_signal": "Clear discoverability rationale without claiming guaranteed AI citation.",
     "asset_types": ["technical_hygiene"]
   },
   {
@@ -33,6 +39,8 @@
     "pillar": "Measurement",
     "priority": "Medium",
     "demo_signal": "Recurring prompt benchmark and before/after dashboard",
+    "validation_hypothesis": "A recurring benchmark makes recommendation impact measurable instead of anecdotal.",
+    "expected_signal": "Prompt-level coverage, model comparison and exportable results.",
     "asset_types": ["dashboard"]
   },
   {
@@ -42,6 +50,8 @@
     "pillar": "Credibility",
     "priority": "High",
     "demo_signal": "Review, comparison, MNB and media proof snippets",
+    "validation_hypothesis": "Third-party proof should make AI-style answers more credible in comparison prompts.",
+    "expected_signal": "Higher credibility score and more external-source/domain evidence.",
     "asset_types": ["third_party", "benchmark"]
   },
   {
@@ -51,6 +61,8 @@
     "pillar": "Credibility + Authority",
     "priority": "High",
     "demo_signal": "Original citable AI-finance study landing page",
+    "validation_hypothesis": "Original research should give NN a citable authority asset beyond product marketing.",
+    "expected_signal": "Higher credibility/authority signal and research next-step links.",
     "asset_types": ["research"]
   },
   {
@@ -60,6 +72,8 @@
     "pillar": "Clarity + Actionability",
     "priority": "Medium",
     "demo_signal": "Life-stage and comparison guide pages",
+    "validation_hypothesis": "Decision guides should help models answer user decision questions more concretely.",
+    "expected_signal": "Higher clarity, product specificity and actionability.",
     "asset_types": ["decision_guide"]
   },
   {
@@ -69,6 +83,8 @@
     "pillar": "Authority",
     "priority": "Medium",
     "demo_signal": "Neutral notability and independent-source roadmap",
+    "validation_hypothesis": "A Wikipedia authority path should support long-term entity credibility if independent sources exist.",
+    "expected_signal": "Authority narrative without treating Wikipedia as a quick marketing action.",
     "asset_types": ["authority_path"]
   },
   {
@@ -78,6 +94,8 @@
     "pillar": "Actionability",
     "priority": "High",
     "demo_signal": "Pension, SZJA, life cover and health decision calculators",
+    "validation_hypothesis": "Calculator mockups should turn NN mentions into concrete next-step recommendations.",
+    "expected_signal": "More explicit NN links and higher actionability.",
     "asset_types": ["calculator"]
   },
   {
@@ -87,6 +105,8 @@
     "pillar": "Actionability / conversion",
     "priority": "Lower-medium",
     "demo_signal": "Personalized next-best-action and advisor handoff pilot",
+    "validation_hypothesis": "Personalized next-best-action should strengthen the conversion narrative after the foundation is built.",
+    "expected_signal": "Higher actionability and advisor handoff relevance.",
     "asset_types": ["personalization"]
   }
 ]

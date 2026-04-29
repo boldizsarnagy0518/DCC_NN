@@ -80,7 +80,7 @@ function renderSummary() {
   byId("currentAvg").textContent = summary.current_avg ?? 0;
   byId("improvedAvg").textContent = summary.improved_avg ?? 0;
   byId("deltaAvg").textContent = `+${summary.delta ?? 0}`;
-  byId("nnLinks").textContent = `${summary.current_nn_link_recommendations ?? 0} → ${
+  byId("nnLinks").textContent = `${summary.current_nn_link_recommendations ?? 0} -> ${
     summary.improved_nn_link_recommendations ?? 0
   }`;
 
@@ -192,7 +192,7 @@ function renderNextStepMix(nextStepMix) {
             <div class="bar-track"><div class="bar-fill" style="width:${(before / maxValue) * 100}%"></div></div>
             <div class="bar-track"><div class="bar-fill improved" style="width:${(after / maxValue) * 100}%"></div></div>
           </div>
-          <span class="delta-text">${before} → ${after}</span>
+          <span class="delta-text">${before} -> ${after}</span>
         </div>
       `;
     })
@@ -227,7 +227,7 @@ function renderGenericMix(elementId, mix) {
             <div class="bar-track"><div class="bar-fill" style="width:${(before / maxValue) * 100}%"></div></div>
             <div class="bar-track"><div class="bar-fill improved" style="width:${(after / maxValue) * 100}%"></div></div>
           </div>
-          <span class="delta-text">${before} → ${after}</span>
+          <span class="delta-text">${before} -> ${after}</span>
         </div>
       `;
     })
@@ -237,16 +237,16 @@ function renderGenericMix(elementId, mix) {
 function renderPromptCoverage(promptRows) {
   byId("promptCoverage").innerHTML = promptRows
     .map((row) => {
-      const mentionText = `${row.current_mentions} → ${row.improved_mentions}`;
+      const mentionText = `${row.current_mentions} -> ${row.improved_mentions}`;
       const linkClass = row.improved_links > row.current_links ? "status-good" : "status-weak";
       const mentionClass = row.improved_mentions >= row.current_mentions ? "status-good" : "status-weak";
       return `
         <tr>
           <td>${escapeHtml(row.prompt)}</td>
           <td>${escapeHtml(row.category)}</td>
-          <td><strong>${row.current_avg} → ${row.improved_avg}</strong></td>
+          <td><strong>${row.current_avg} -> ${row.improved_avg}</strong></td>
           <td class="${mentionClass}">${mentionText}</td>
-          <td class="${linkClass}">${row.current_links} → ${row.improved_links}</td>
+          <td class="${linkClass}">${row.current_links} -> ${row.improved_links}</td>
         </tr>
       `;
     })
@@ -261,9 +261,11 @@ function renderRecommendationCoverage() {
         <article class="coverage-card">
           <span class="rec-id">${escapeHtml(rec.id)}</span>
           <strong>${escapeHtml(rec.title)}</strong>
-          <p>${escapeHtml(rec.horizon)} · ${escapeHtml(rec.pillar)} · ${escapeHtml(rec.priority)}</p>
+          <p>${escapeHtml(rec.horizon)} - ${escapeHtml(rec.pillar)} - ${escapeHtml(rec.priority)}</p>
           <p><span class="status-good">${rec.demo_asset_count || 0}</span> demo asset signal(s)</p>
           <p>${escapeHtml(rec.demo_signal)}</p>
+          <p><strong>Validation hypothesis:</strong> ${escapeHtml(rec.validation_hypothesis || "")}</p>
+          <p><strong>Expected signal:</strong> ${escapeHtml(rec.expected_signal || "")}</p>
         </article>
       `;
     })
@@ -302,7 +304,7 @@ function answerBoxHtml(result, mode) {
   }
   const error = result.error ? `<p class="error">Provider fallback: ${escapeHtml(result.error)}</p>` : "";
   const modeLabel = {
-    api: "API · controlled sources",
+    api: "API - controlled sources",
     mock: "Mock output",
     mock_fallback: "Mock fallback",
   }[result.provider_mode] || result.provider_mode;
@@ -314,7 +316,7 @@ function answerBoxHtml(result, mode) {
   return `
     <article class="answer-box ${mode}">
       <header>
-        <strong>${mode === "current" ? "Current corpus" : "Improved corpus"}</strong>
+        <strong>${mode === "current" ? "Without recommendation mockups" : "With recommendation mockups"}</strong>
         <span class="mode-badge ${escapeHtml(result.provider_mode)}">${escapeHtml(modeLabel)}</span>
         <span class="score-chip">${result.scores.total}</span>
       </header>
@@ -378,15 +380,25 @@ function renderSources(promptId) {
           <div class="source-meta">
             <span class="pill">${escapeHtml(source.type)}</span>
             <span class="pill">${escapeHtml(source.pillar)}</span>
-            <span class="source-status ${escapeHtml(source.status || "unknown")}">${escapeHtml(
-              (source.status || "unknown").replaceAll("_", " "),
-            )}</span>
+            <span class="source-status ${escapeHtml(source.status || "unknown")}">${escapeHtml(formatSourceStatus(source.status))}</span>
           </div>
           <p>${escapeHtml(source.body)}</p>
         </article>
       `;
     })
     .join("");
+}
+
+function formatSourceStatus(status) {
+  const labels = {
+    mocked_future_asset: "recommendation mockup asset",
+    current_live_like: "current-like source",
+    current_live_asset: "existing NN asset",
+    third_party_example: "third-party example",
+    technical_audit_signal: "technical audit signal",
+    current_market_context: "current market context",
+  };
+  return labels[status] || (status || "unknown").replaceAll("_", " ");
 }
 
 async function loadCached() {

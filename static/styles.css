@@ -133,6 +133,7 @@ main {
 
 .status-band,
 .methodology-box,
+.validation-box,
 .toolbar,
 .panel,
 .comparison,
@@ -165,6 +166,45 @@ main {
   padding: 18px;
   margin-bottom: 16px;
   border-left: 6px solid var(--nn-orange);
+}
+
+.validation-box {
+  display: grid;
+  grid-template-columns: minmax(360px, 1fr) minmax(340px, 0.8fr);
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.validation-box p {
+  margin: 8px 0 0;
+  color: var(--nn-soft-ink);
+  line-height: 1.45;
+}
+
+.validation-flow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.validation-flow span,
+.validation-flow strong {
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  padding: 9px;
+  border: 1px solid var(--nn-line);
+  border-radius: 4px;
+  background: #fbfaf8;
+  text-align: center;
+  font-size: 0.86rem;
+}
+
+.validation-flow strong {
+  background: #fff4e8;
+  border-color: rgba(245, 130, 32, 0.4);
 }
 
 .methodology-box p {
@@ -812,6 +852,7 @@ select {
 @media (max-width: 1120px) {
   .hero,
   .methodology-box,
+  .validation-box,
   .toolbar,
   .split,
   .insight-grid,
