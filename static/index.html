@@ -11,9 +11,9 @@
       <div class="brand-mark">NN</div>
       <div class="hero-copy">
         <p class="eyebrow">GenAI Visibility Demo</p>
-        <h1>From being mentioned to being recommended as the next step</h1>
+        <h1>Controlled GEO Simulation Dashboard</h1>
         <p>
-          Controlled RAG benchmark showing how NN answers change before and after the mocked GEO recommendation assets.
+          From being mentioned to being recommended as the next step.
         </p>
       </div>
       <div class="hero-note">
@@ -28,19 +28,37 @@
           <strong id="statusText">Loading demo...</strong>
           <p id="runMeta" class="muted-text">Use `uv run python generate_responses.py` to refresh results.</p>
         </div>
-        <div id="providerStatus" class="provider-status"></div>
+        <div class="status-actions">
+          <a class="export-link" href="/api/export.csv">Export CSV</a>
+          <div id="providerStatus" class="provider-status"></div>
+        </div>
+      </section>
+
+      <section class="methodology-box">
+        <div>
+          <h2>Methodology note</h2>
+          <p>
+            This dashboard compares model responses using controlled source corpora. Provider APIs, when enabled,
+            receive the same controlled source package and do not browse the public web in this version.
+          </p>
+        </div>
+        <div class="methodology-points">
+          <span>Measures controlled answer quality</span>
+          <span>Improved assets are simulated future assets</span>
+          <span>Not a live public AI ranking tracker</span>
+        </div>
       </section>
 
       <section class="executive-grid" aria-label="Executive KPI summary">
         <article class="kpi-card before">
           <span>Before mockup</span>
           <strong id="currentAvg">0</strong>
-          <p>Current-like source environment</p>
+          <p>Controlled GEO Readiness Score</p>
         </article>
         <article class="kpi-card after">
           <span>After mockup</span>
           <strong id="improvedAvg">0</strong>
-          <p>Improved GEO source environment</p>
+          <p>Controlled GEO Readiness Score</p>
         </article>
         <article class="kpi-card lift">
           <span>Average GEO lift</span>
@@ -148,6 +166,41 @@
             <span class="small">What NN gets linked to</span>
           </div>
           <div id="nextStepMix" class="mix-list"></div>
+        </div>
+      </section>
+
+      <section class="insight-grid">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Source Domain Mix</h2>
+            <span class="small">Where retrieved evidence comes from</span>
+          </div>
+          <div id="sourceDomainMix" class="mix-list"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Competitor Mention Check</h2>
+            <span class="small">Controlled-answer competitor mentions</span>
+          </div>
+          <div id="competitorMix" class="mix-list"></div>
+        </div>
+      </section>
+
+      <section class="definitions-section">
+        <div class="panel-head">
+          <div>
+            <h2>How to Read the KPIs</h2>
+            <p class="prompt-text">Definitions used by the controlled scoring logic.</p>
+          </div>
+          <span class="small">Transparent heuristic scoring</span>
+        </div>
+        <div class="definition-grid">
+          <article><strong>Mention quality</strong><p>Whether NN is mentioned clearly, usefully and with enough context.</p></article>
+          <article><strong>Product specificity</strong><p>Whether the answer connects NN to products, needs or decision situations.</p></article>
+          <article><strong>Credibility</strong><p>Whether the answer uses citations, external proof, research or entity signals.</p></article>
+          <article><strong>Actionability</strong><p>Whether the answer points to calculators, guides, quote paths or advisor handoff.</p></article>
+          <article><strong>NN link recommendation</strong><p>An explicit nn.hu URL presented as a next step, not just a brand mention.</p></article>
         </div>
       </section>
 

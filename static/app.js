@@ -142,6 +142,8 @@ function renderSummary() {
 
   renderPillarBreakdown(summary.score_breakdown || {});
   renderNextStepMix(summary.next_step_mix || {});
+  renderSourceDomainMix(summary.source_domain_mix || {});
+  renderCompetitorMix(summary.competitor_mentions || {});
   renderPromptCoverage(summary.prompt_summary || []);
   renderRecommendationCoverage();
 }
@@ -180,6 +182,41 @@ function renderNextStepMix(nextStepMix) {
   }
   const maxValue = Math.max(...keys.map((key) => Math.max(current[key] || 0, improved[key] || 0)), 1);
   byId("nextStepMix").innerHTML = keys
+    .map((key) => {
+      const before = current[key] || 0;
+      const after = improved[key] || 0;
+      return `
+        <div class="mix-row">
+          <span class="mix-label">${escapeHtml(key.replaceAll("_", " "))}</span>
+          <div class="dual-track">
+            <div class="bar-track"><div class="bar-fill" style="width:${(before / maxValue) * 100}%"></div></div>
+            <div class="bar-track"><div class="bar-fill improved" style="width:${(after / maxValue) * 100}%"></div></div>
+          </div>
+          <span class="delta-text">${before} → ${after}</span>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function renderSourceDomainMix(sourceDomainMix) {
+  renderGenericMix("sourceDomainMix", sourceDomainMix, "No source domains found.");
+}
+
+function renderCompetitorMix(competitorMix) {
+  renderGenericMix("competitorMix", competitorMix, "No competitor mentions found.");
+}
+
+function renderGenericMix(elementId, mix) {
+  const current = mix.current || {};
+  const improved = mix.improved || {};
+  const keys = [...new Set([...Object.keys(current), ...Object.keys(improved)])].sort();
+  if (!keys.length) {
+    byId(elementId).innerHTML = `<p class="muted-text">No values found.</p>`;
+    return;
+  }
+  const maxValue = Math.max(...keys.map((key) => Math.max(current[key] || 0, improved[key] || 0)), 1);
+  byId(elementId).innerHTML = keys
     .map((key) => {
       const before = current[key] || 0;
       const after = improved[key] || 0;
@@ -264,6 +301,11 @@ function answerBoxHtml(result, mode) {
     `;
   }
   const error = result.error ? `<p class="error">Provider fallback: ${escapeHtml(result.error)}</p>` : "";
+  const modeLabel = {
+    api: "API · controlled sources",
+    mock: "Mock output",
+    mock_fallback: "Mock fallback",
+  }[result.provider_mode] || result.provider_mode;
   const links = result.link_recommendations?.length
     ? `<div class="breakdown"><strong>NN link recommendations</strong>${result.link_recommendations
         .map((link) => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noreferrer">${escapeHtml(link.title)}</a>`)
@@ -273,6 +315,7 @@ function answerBoxHtml(result, mode) {
     <article class="answer-box ${mode}">
       <header>
         <strong>${mode === "current" ? "Current corpus" : "Improved corpus"}</strong>
+        <span class="mode-badge ${escapeHtml(result.provider_mode)}">${escapeHtml(modeLabel)}</span>
         <span class="score-chip">${result.scores.total}</span>
       </header>
       <div class="answer-text">${escapeHtml(result.answer)}${error}</div>
@@ -335,6 +378,9 @@ function renderSources(promptId) {
           <div class="source-meta">
             <span class="pill">${escapeHtml(source.type)}</span>
             <span class="pill">${escapeHtml(source.pillar)}</span>
+            <span class="source-status ${escapeHtml(source.status || "unknown")}">${escapeHtml(
+              (source.status || "unknown").replaceAll("_", " "),
+            )}</span>
           </div>
           <p>${escapeHtml(source.body)}</p>
         </article>

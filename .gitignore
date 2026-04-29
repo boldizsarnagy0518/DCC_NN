@@ -6,3 +6,4 @@ __pycache__/
 server.out.log
 server.err.log
 results/latest_results.json
+results/latest_results.csv

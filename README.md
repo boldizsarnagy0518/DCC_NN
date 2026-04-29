@@ -9,6 +9,20 @@ The dashboard compares two controlled source environments:
 
 The point of the demo is not to prove that public ChatGPT/Gemini/Claude rankings immediately change. It shows that when better source assets are available to retrieval, model answers become more specific, more citable and more actionable.
 
+## Methodology Note
+
+This dashboard has two intended use cases:
+
+1. **Controlled GEO simulation**  
+   The current implementation compares model responses using controlled source corpora. It shows how improved NN assets can make answers more specific, credible and actionable.
+
+2. **Future real web visibility measurement**  
+   A future version can add web search or search-grounded APIs to measure how AI systems retrieve, cite and recommend NN from live public web sources.
+
+The current implementation should not be interpreted as a direct measurement of public ChatGPT, Gemini or Claude rankings. It is a controlled source-readiness and answer-quality demo.
+
+In live API mode, provider models receive the same controlled source package. They do not browse the public web in this version.
+
 ## Recommended Workflow With UV
 
 UV is the project runner. No external Python packages are required.
@@ -137,6 +151,7 @@ The dashboard is split into two clear views:
 The top of the dashboard shows executive KPIs:
 
 - Current vs improved GEO score.
+- Controlled GEO Readiness Score, not live public AI ranking.
 - Average score lift.
 - NN link recommendations before vs after.
 - How many prompts mention NN.
@@ -147,10 +162,39 @@ Below that, the dashboard explains why the after-state improves:
 
 - **GEO Pillar Breakdown:** mention quality, product specificity, credibility and actionability.
 - **Next-step Destination Mix:** what kind of NN asset gets linked, such as calculator, product Q&A, guide, research or entity page.
+- **Source Domain Mix:** which domains or local source groups appear in the retrieved evidence.
+- **Competitor Mention Check:** controlled-answer mentions of UNIQA, Generali, Allianz and Groupama.
 - **Actionable Recommendation Coverage:** how the mocked assets map to the 10 recommendations in the context file.
 - **Prompt-level Coverage:** which prompts mention NN and which prompts include explicit NN links.
+- **How to Read the KPIs:** short definitions for the scoring categories.
 
 The final test section lets you inspect individual prompts, compare model outputs, and see which local sources were retrieved.
+
+The dashboard also exposes a CSV export:
+
+```text
+GET /api/export.csv
+```
+
+The generator writes the same export to:
+
+```text
+results/latest_results.csv
+```
+
+Each answer shows whether it came from:
+
+- `API · controlled sources`
+- `Mock output`
+- `Mock fallback`
+
+Each source also shows a status label:
+
+- `current live like`
+- `current live asset`
+- `mocked future asset`
+- `third party example`
+- `technical audit signal`
 
 ## Current Demo Assets
 
@@ -180,6 +224,7 @@ GET  /api/config
 GET  /api/cached
 GET  /api/sources?mode=current
 GET  /api/sources?mode=improved
+GET  /api/export.csv
 POST /api/run
 ```
 

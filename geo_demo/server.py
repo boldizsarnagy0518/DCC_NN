@@ -1,6 +1,9 @@
 import argparse
+import csv
+import io
 import json
 import mimetypes
+import re
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
@@ -21,6 +24,9 @@ from .results import load_latest_results
 from .scoring import score_answer
 
 
+COMPETITORS = ("UNIQA", "Generali", "Allianz", "Groupama")
+
+
 def json_response(handler, payload, status=200):
     body = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
     handler.send_response(status)
@@ -28,6 +34,15 @@ def json_response(handler, payload, status=200):
     handler.send_header("Content-Length", str(len(body)))
     handler.end_headers()
     handler.wfile.write(body)
+
+
+def text_response(handler, body, content_type="text/plain; charset=utf-8", status=200):
+    payload = body.encode("utf-8")
+    handler.send_response(status)
+    handler.send_header("Content-Type", content_type)
+    handler.send_header("Content-Length", str(len(payload)))
+    handler.end_headers()
+    handler.wfile.write(payload)
 
 
 def read_request_json(handler):
@@ -44,9 +59,25 @@ def compact_source(source):
         "title": source["title"],
         "type": source["type"],
         "pillar": source["pillar"],
+        "status": source.get("status", "unknown"),
         "source_url": source.get("source_url", "local-demo"),
         "body": source["body"],
     }
+
+
+def domain_from_url(url):
+    parsed = urlparse(url or "")
+    if parsed.netloc:
+        return parsed.netloc.lower()
+    return "local-demo"
+
+
+def count_competitor_mentions(answer):
+    mentions = {}
+    for competitor in COMPETITORS:
+        pattern = rf"\b{re.escape(competitor)}\b"
+        mentions[competitor] = len(re.findall(pattern, answer or "", flags=re.IGNORECASE))
+    return mentions
 
 
 def recommendation_coverage():
@@ -76,14 +107,18 @@ def run_single(prompt_item, corpus_mode, provider_id, use_live=False):
     sources = retrieve_sources(prompt_item["prompt"], corpus, limit=5)
     grounded_prompt = build_grounded_prompt(prompt_item["prompt"], sources)
     provider_mode = "mock"
+    run_mode = "mock"
     error = None
 
     if use_live:
         try:
             answer = call_provider(provider_id, grounded_prompt)
             provider_mode = "api"
+            run_mode = "api_controlled_sources"
         except ProviderError as exc:
             answer = mock_answer(provider_id, prompt_item["prompt"], sources, corpus_mode)
+            provider_mode = "mock_fallback"
+            run_mode = "api_failed_mock_fallback"
             error = str(exc)
     else:
         answer = mock_answer(provider_id, prompt_item["prompt"], sources, corpus_mode)
@@ -95,10 +130,12 @@ def run_single(prompt_item, corpus_mode, provider_id, use_live=False):
         "model": provider_id,
         "model_label": PROVIDERS[provider_id]["label"],
         "provider_mode": provider_mode,
+        "run_mode": run_mode,
         "corpus_mode": corpus_mode,
         "answer": answer,
         "citations": [source["id"] for source in sources],
         "nn_mentions": count_nn_mentions(answer),
+        "competitor_mentions": count_competitor_mentions(answer),
         "link_recommendations": extract_link_recommendations(answer, sources),
         "retrieved_sources": [compact_source(source) for source in sources],
         "scores": score_answer(answer, sources),
@@ -140,7 +177,9 @@ def summarize_results(results):
     mention_prompts_by_mode = {"current": set(), "improved": set()}
     link_prompts_by_mode = {"current": set(), "improved": set()}
     source_type_mix = {"current": {}, "improved": {}}
+    source_domain_mix = {"current": {}, "improved": {}}
     next_step_mix = {"current": {}, "improved": {}}
+    competitor_mentions = {"current": {name: 0 for name in COMPETITORS}, "improved": {name: 0 for name in COMPETITORS}}
     by_model = {}
     prompt_deltas = {}
     prompt_summary = {}
@@ -163,6 +202,11 @@ def summarize_results(results):
         for source in result.get("retrieved_sources", []):
             source_type = source.get("type") or "unknown"
             source_type_mix.setdefault(mode, {})[source_type] = source_type_mix.setdefault(mode, {}).get(source_type, 0) + 1
+            domain = domain_from_url(source.get("source_url"))
+            source_domain_mix.setdefault(mode, {})[domain] = source_domain_mix.setdefault(mode, {}).get(domain, 0) + 1
+        for competitor, count in result.get("competitor_mentions", {}).items():
+            competitor_mentions.setdefault(mode, {}).setdefault(competitor, 0)
+            competitor_mentions[mode][competitor] += count
         mention_count = result.get("nn_mentions", 0)
         mentions_by_mode[result["corpus_mode"]] = mentions_by_mode.get(result["corpus_mode"], 0) + mention_count
         if mention_count:
@@ -244,7 +288,9 @@ def summarize_results(results):
         "model_summary": model_summary,
         "score_breakdown": breakdown_summary,
         "source_type_mix": source_type_mix,
+        "source_domain_mix": source_domain_mix,
         "next_step_mix": next_step_mix,
+        "competitor_mentions": competitor_mentions,
         "prompt_summary": prompt_rows,
         "current_nn_mentions": mentions_by_mode.get("current", 0),
         "improved_nn_mentions": mentions_by_mode.get("improved", 0),
@@ -260,6 +306,53 @@ def summarize_results(results):
         "current_linked_answers": linked_answers_by_mode.get("current", 0),
         "improved_linked_answers": linked_answers_by_mode.get("improved", 0),
     }
+
+
+def results_to_csv(results):
+    output = io.StringIO()
+    fieldnames = [
+        "prompt_id",
+        "category",
+        "model",
+        "provider_mode",
+        "corpus_mode",
+        "score_total",
+        "mention_quality",
+        "product_specificity",
+        "credibility",
+        "actionability",
+        "nn_mentions",
+        "nn_link_recommendations",
+        "competitor_mentions",
+        "source_ids",
+        "source_domains",
+        "answer",
+    ]
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
+    writer.writeheader()
+    for result in results:
+        sources = result.get("retrieved_sources", [])
+        writer.writerow(
+            {
+                "prompt_id": result.get("prompt_id"),
+                "category": result.get("category"),
+                "model": result.get("model"),
+                "provider_mode": result.get("provider_mode"),
+                "corpus_mode": result.get("corpus_mode"),
+                "score_total": result.get("scores", {}).get("total"),
+                "mention_quality": result.get("scores", {}).get("mention_quality"),
+                "product_specificity": result.get("scores", {}).get("product_specificity"),
+                "credibility": result.get("scores", {}).get("credibility"),
+                "actionability": result.get("scores", {}).get("actionability"),
+                "nn_mentions": result.get("nn_mentions"),
+                "nn_link_recommendations": len(result.get("link_recommendations", [])),
+                "competitor_mentions": json.dumps(result.get("competitor_mentions", {}), ensure_ascii=False),
+                "source_ids": ";".join(source.get("id", "") for source in sources),
+                "source_domains": ";".join(domain_from_url(source.get("source_url")) for source in sources),
+                "answer": result.get("answer"),
+            }
+        )
+    return output.getvalue()
 
 
 class DemoHandler(BaseHTTPRequestHandler):
@@ -312,6 +405,12 @@ class DemoHandler(BaseHTTPRequestHandler):
                     "source": "generated-fallback",
                 },
             )
+            return
+
+        if parsed.path == "/api/export.csv":
+            latest = load_latest_results()
+            results = latest["results"] if latest else run_benchmark(use_live=False)
+            text_response(self, results_to_csv(results), content_type="text/csv; charset=utf-8")
             return
 
         self.serve_static(parsed.path)
