@@ -122,12 +122,12 @@ function renderSummary() {
       const label = state.config.providers[model]?.label || model;
       return `
         <div class="impact-row">
-          <span>${escapeHtml(label.split(" ")[0])}</span>
+          <span>${escapeHtml(label.split(" ")[0])} baseline</span>
           <div class="bar-track"><div class="bar-fill" style="width:${Math.min(values.current, 100)}%"></div></div>
           <strong>${values.current}</strong>
         </div>
         <div class="impact-row">
-          <span>Improved</span>
+          <span>Mockup</span>
           <div class="bar-track"><div class="bar-fill improved" style="width:${Math.min(values.improved, 100)}%"></div></div>
           <strong>${values.improved}</strong>
         </div>
@@ -297,7 +297,7 @@ function answerBoxHtml(result, mode) {
   if (!result) {
     return `
       <article class="answer-box ${mode}">
-        <header><strong>${mode === "current" ? "Current" : "Improved"}</strong><span class="score-chip">N/A</span></header>
+        <header><strong>${mode === "current" ? "Without recommendation mockups" : "With recommendation mockups"}</strong><span class="score-chip">N/A</span></header>
         <div class="answer-text">No result loaded.</div>
       </article>
     `;
@@ -348,7 +348,7 @@ function renderResults() {
         <div class="model-result">
           <div class="model-title">
             <h3>${escapeHtml(label)}</h3>
-            <span class="pill">Score lift: ${delta >= 0 ? "+" : ""}${delta}</span>
+            <span class="pill">Answer quality lift: ${delta >= 0 ? "+" : ""}${delta}</span>
           </div>
           <div class="answer-columns">
             ${answerBoxHtml(current, "current")}
@@ -426,7 +426,7 @@ async function runBenchmark(full = false) {
     body.prompt_id = state.selectedPromptId;
   }
 
-  setStatus(useLive ? "Running provider APIs..." : "Running local mock benchmark...");
+  setStatus(useLive ? "Running provider APIs with controlled sources..." : "Running local mock benchmark...");
   const payload = await fetchJson("/api/run", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
@@ -449,7 +449,11 @@ async function runBenchmark(full = false) {
   }
   renderSummary();
   renderResults();
-  setStatus(payload.cached ? "Local controlled benchmark completed." : "Provider API run completed.");
+  setStatus(
+    payload.cached
+      ? "Local controlled benchmark completed."
+      : "Provider run completed. Check answer badges for API vs mock fallback."
+  );
 }
 
 async function init() {
