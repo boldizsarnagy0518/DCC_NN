@@ -17,8 +17,8 @@
         </p>
       </div>
       <div class="hero-note">
-        <strong>Simulation mode</strong>
-        <span>Local controlled sources. Not a claim about live public AI rankings.</span>
+        <strong>Controlled POC</strong>
+        <span>Controlled before/after source setup designed to isolate recommendation impact.</span>
       </div>
     </header>
 
@@ -144,14 +144,14 @@
         <div class="panel">
           <div class="panel-head">
             <h2>Model Summary</h2>
-            <span class="small">Average score by model</span>
+            <span class="small">Average recommendation impact score by model</span>
           </div>
           <table class="summary-table">
             <thead>
               <tr>
                 <th>Model</th>
-                <th>Before</th>
-                <th>After</th>
+                <th>Baseline</th>
+                <th>Mockup</th>
                 <th>Lift</th>
               </tr>
             </thead>
@@ -162,7 +162,7 @@
         <div class="panel visual-panel">
           <div class="panel-head">
             <h2>Impact View</h2>
-            <span class="small">Before vs after</span>
+            <span class="small">Baseline vs mockup run</span>
           </div>
           <div id="impactBars" class="impact-bars"></div>
         </div>
@@ -238,7 +238,7 @@
             <h2>Prompt-level Coverage</h2>
             <p class="prompt-text">Mention and link coverage by tested user question.</p>
           </div>
-          <span class="small">Before / after by prompt</span>
+          <span class="small">Baseline vs mockup by prompt</span>
         </div>
         <div class="table-scroll">
           <table class="summary-table prompt-table">
