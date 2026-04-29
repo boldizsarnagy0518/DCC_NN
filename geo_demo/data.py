@@ -5,6 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 STATIC_DIR = ROOT / "static"
+RESULTS_DIR = ROOT / "results"
 
 
 def load_json(name):
@@ -15,6 +16,10 @@ def load_json(name):
 
 def load_prompts():
     return load_json("prompts.json")
+
+
+def load_recommendations():
+    return load_json("recommendations.json")
 
 
 def load_corpus(mode):

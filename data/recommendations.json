@@ -1,0 +1,92 @@
+[
+  {
+    "id": "R1",
+    "title": "Rebuild key product pages around conversational search",
+    "horizon": "0-3 months",
+    "pillar": "Clarity",
+    "priority": "High",
+    "demo_signal": "Q&A product pages and extractable answer blocks",
+    "asset_types": ["product_qa"]
+  },
+  {
+    "id": "R2",
+    "title": "Strengthen NN's machine-readable identity",
+    "horizon": "0-3 months",
+    "pillar": "Discoverability + Credibility",
+    "priority": "High",
+    "demo_signal": "Entity profile with sameAs / Wikidata-style proof",
+    "asset_types": ["entity"]
+  },
+  {
+    "id": "R3",
+    "title": "Fix technical discoverability hygiene",
+    "horizon": "0-6 months",
+    "pillar": "Discoverability",
+    "priority": "Medium-high",
+    "demo_signal": "Sitemap, IndexNow, structured-data and llms.txt pilot hygiene",
+    "asset_types": ["technical_hygiene"]
+  },
+  {
+    "id": "R4",
+    "title": "Build an AI visibility dashboard",
+    "horizon": "0-3 months",
+    "pillar": "Measurement",
+    "priority": "Medium",
+    "demo_signal": "Recurring prompt benchmark and before/after dashboard",
+    "asset_types": ["dashboard"]
+  },
+  {
+    "id": "R5",
+    "title": "Build a third-party credibility ecosystem",
+    "horizon": "3-12 months",
+    "pillar": "Credibility",
+    "priority": "High",
+    "demo_signal": "Review, comparison, MNB and media proof snippets",
+    "asset_types": ["third_party", "benchmark"]
+  },
+  {
+    "id": "R6",
+    "title": "Publish original Hungarian AI-finance research",
+    "horizon": "3-12 months",
+    "pillar": "Credibility + Authority",
+    "priority": "High",
+    "demo_signal": "Original citable AI-finance study landing page",
+    "asset_types": ["research"]
+  },
+  {
+    "id": "R7",
+    "title": "Build decision-guide pages",
+    "horizon": "3-12 months",
+    "pillar": "Clarity + Actionability",
+    "priority": "Medium",
+    "demo_signal": "Life-stage and comparison guide pages",
+    "asset_types": ["decision_guide"]
+  },
+  {
+    "id": "R8",
+    "title": "Build toward Wikipedia authority path",
+    "horizon": "12-36 months",
+    "pillar": "Authority",
+    "priority": "Medium",
+    "demo_signal": "Neutral notability and independent-source roadmap",
+    "asset_types": ["authority_path"]
+  },
+  {
+    "id": "R9",
+    "title": "Launch public financial calculators",
+    "horizon": "12-36 months",
+    "pillar": "Actionability",
+    "priority": "High",
+    "demo_signal": "Pension, SZJA, life cover and health decision calculators",
+    "asset_types": ["calculator"]
+  },
+  {
+    "id": "R10",
+    "title": "Advanced personalization",
+    "horizon": "12-36 months",
+    "pillar": "Actionability / conversion",
+    "priority": "Lower-medium",
+    "demo_signal": "Personalized next-best-action and advisor handoff pilot",
+    "asset_types": ["personalization"]
+  }
+]

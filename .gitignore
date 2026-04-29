@@ -1,6 +1,8 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.venv/
 .env
 server.out.log
 server.err.log
+results/latest_results.json

@@ -5,7 +5,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from .data import STATIC_DIR, corpus_modes, load_corpus, load_prompts
+from .data import STATIC_DIR, corpus_modes, load_corpus, load_prompts, load_recommendations
+from .env import load_dotenv
 from .providers import (
     PROVIDERS,
     ProviderError,
@@ -16,6 +17,7 @@ from .providers import (
 )
 from .linking import count_nn_mentions, extract_link_recommendations
 from .retrieval import retrieve_sources
+from .results import load_latest_results
 from .scoring import score_answer
 
 
@@ -45,6 +47,28 @@ def compact_source(source):
         "source_url": source.get("source_url", "local-demo"),
         "body": source["body"],
     }
+
+
+def recommendation_coverage():
+    recommendations = load_recommendations()
+    improved_sources = load_corpus("improved")
+    source_type_counts = {}
+    for source in improved_sources:
+        source_type = source.get("type")
+        source_type_counts[source_type] = source_type_counts.get(source_type, 0) + 1
+
+    enriched = []
+    for rec in recommendations:
+        asset_count = 0
+        for asset_type in rec.get("asset_types", []):
+            if asset_type == "dashboard":
+                asset_count += 1
+            else:
+                asset_count += source_type_counts.get(asset_type, 0)
+        item = dict(rec)
+        item["demo_asset_count"] = asset_count
+        enriched.append(item)
+    return enriched
 
 
 def run_single(prompt_item, corpus_mode, provider_id, use_live=False):
@@ -104,25 +128,71 @@ def run_benchmark(prompt_ids=None, corpus_mode="both", models=None, use_live=Fal
 
 def summarize_results(results):
     by_mode = {"current": [], "improved": []}
+    score_keys = ("mention_quality", "product_specificity", "credibility", "actionability")
+    score_breakdown = {
+        "current": {key: [] for key in score_keys},
+        "improved": {key: [] for key in score_keys},
+    }
     links_by_mode = {"current": 0, "improved": 0}
     linked_answers_by_mode = {"current": 0, "improved": 0}
     mentions_by_mode = {"current": 0, "improved": 0}
+    prompts_by_mode = {"current": set(), "improved": set()}
+    mention_prompts_by_mode = {"current": set(), "improved": set()}
+    link_prompts_by_mode = {"current": set(), "improved": set()}
+    source_type_mix = {"current": {}, "improved": {}}
+    next_step_mix = {"current": {}, "improved": {}}
     by_model = {}
     prompt_deltas = {}
+    prompt_summary = {}
     for result in results:
         total = result["scores"]["total"]
+        mode = result["corpus_mode"]
+        prompt_id = result["prompt_id"]
+        prompts_by_mode.setdefault(mode, set()).add(prompt_id)
         by_mode.setdefault(result["corpus_mode"], []).append(total)
+        for key in score_keys:
+            score_breakdown.setdefault(mode, {}).setdefault(key, []).append(result["scores"].get(key, 0))
         link_count = len(result.get("link_recommendations", []))
         links_by_mode[result["corpus_mode"]] = links_by_mode.get(result["corpus_mode"], 0) + link_count
         linked_answers_by_mode[result["corpus_mode"]] = linked_answers_by_mode.get(result["corpus_mode"], 0) + (
             1 if link_count else 0
         )
-        mentions_by_mode[result["corpus_mode"]] = mentions_by_mode.get(result["corpus_mode"], 0) + result.get(
-            "nn_mentions", 0
-        )
+        for link in result.get("link_recommendations", []):
+            link_type = link.get("type") or "unknown"
+            next_step_mix.setdefault(mode, {})[link_type] = next_step_mix.setdefault(mode, {}).get(link_type, 0) + 1
+        for source in result.get("retrieved_sources", []):
+            source_type = source.get("type") or "unknown"
+            source_type_mix.setdefault(mode, {})[source_type] = source_type_mix.setdefault(mode, {}).get(source_type, 0) + 1
+        mention_count = result.get("nn_mentions", 0)
+        mentions_by_mode[result["corpus_mode"]] = mentions_by_mode.get(result["corpus_mode"], 0) + mention_count
+        if mention_count:
+            mention_prompts_by_mode.setdefault(mode, set()).add(prompt_id)
+        if link_count:
+            link_prompts_by_mode.setdefault(mode, set()).add(prompt_id)
         by_model.setdefault(result["model"], {}).setdefault(result["corpus_mode"], []).append(total)
         key = (result["prompt_id"], result["model"])
         prompt_deltas.setdefault(key, {})[result["corpus_mode"]] = total
+        prompt_row = prompt_summary.setdefault(
+            prompt_id,
+            {
+                "prompt_id": prompt_id,
+                "category": result["category"],
+                "prompt": result["prompt"],
+                "current_scores": [],
+                "improved_scores": [],
+                "current_mentions": 0,
+                "improved_mentions": 0,
+                "current_links": 0,
+                "improved_links": 0,
+                "current_linked_models": 0,
+                "improved_linked_models": 0,
+            },
+        )
+        prompt_row[f"{mode}_scores"].append(total)
+        prompt_row[f"{mode}_mentions"] += mention_count
+        prompt_row[f"{mode}_links"] += link_count
+        if link_count:
+            prompt_row[f"{mode}_linked_models"] += 1
 
     def avg(values):
         return round(sum(values) / len(values), 1) if values else 0
@@ -145,6 +215,26 @@ def summarize_results(results):
             "delta": round(avg(modes.get("improved", [])) - avg(modes.get("current", [])), 1),
         }
 
+    breakdown_summary = {}
+    for key in score_keys:
+        current_score = avg(score_breakdown["current"].get(key, []))
+        improved_score = avg(score_breakdown["improved"].get(key, []))
+        breakdown_summary[key] = {
+            "current": current_score,
+            "improved": improved_score,
+            "delta": round(improved_score - current_score, 1),
+        }
+
+    prompt_rows = []
+    for row in prompt_summary.values():
+        current_score = avg(row.pop("current_scores"))
+        improved_score = avg(row.pop("improved_scores"))
+        row["current_avg"] = current_score
+        row["improved_avg"] = improved_score
+        row["delta"] = round(improved_score - current_score, 1)
+        prompt_rows.append(row)
+    prompt_rows.sort(key=lambda item: item["prompt_id"])
+
     return {
         "current_avg": current_avg,
         "improved_avg": improved_avg,
@@ -152,8 +242,18 @@ def summarize_results(results):
         "improved_pairs": improved_pairs,
         "compared_pairs": compared_pairs,
         "model_summary": model_summary,
+        "score_breakdown": breakdown_summary,
+        "source_type_mix": source_type_mix,
+        "next_step_mix": next_step_mix,
+        "prompt_summary": prompt_rows,
         "current_nn_mentions": mentions_by_mode.get("current", 0),
         "improved_nn_mentions": mentions_by_mode.get("improved", 0),
+        "current_total_prompts": len(prompts_by_mode.get("current", set())),
+        "improved_total_prompts": len(prompts_by_mode.get("improved", set())),
+        "current_prompts_with_nn_mentions": len(mention_prompts_by_mode.get("current", set())),
+        "improved_prompts_with_nn_mentions": len(mention_prompts_by_mode.get("improved", set())),
+        "current_prompts_with_nn_links": len(link_prompts_by_mode.get("current", set())),
+        "improved_prompts_with_nn_links": len(link_prompts_by_mode.get("improved", set())),
         "current_nn_link_recommendations": links_by_mode.get("current", 0),
         "improved_nn_link_recommendations": links_by_mode.get("improved", 0),
         "link_recommendation_delta": links_by_mode.get("improved", 0) - links_by_mode.get("current", 0),
@@ -172,6 +272,7 @@ class DemoHandler(BaseHTTPRequestHandler):
                 self,
                 {
                     "prompts": load_prompts(),
+                    "recommendations": recommendation_coverage(),
                     "providers": provider_status(),
                     "corpus_modes": corpus_modes(),
                 },
@@ -188,8 +289,29 @@ class DemoHandler(BaseHTTPRequestHandler):
             return
 
         if parsed.path == "/api/cached":
+            latest = load_latest_results()
+            if latest:
+                json_response(
+                    self,
+                    {
+                        "results": latest["results"],
+                        "summary": latest["summary"],
+                        "cached": True,
+                        "generated_at": latest.get("generated_at"),
+                        "source": "results/latest_results.json",
+                    },
+                )
+                return
             results = run_benchmark(use_live=False)
-            json_response(self, {"results": results, "summary": summarize_results(results), "cached": True})
+            json_response(
+                self,
+                {
+                    "results": results,
+                    "summary": summarize_results(results),
+                    "cached": True,
+                    "source": "generated-fallback",
+                },
+            )
             return
 
         self.serve_static(parsed.path)
@@ -252,6 +374,8 @@ def main():
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", default=8765, type=int)
     args = parser.parse_args()
+
+    load_dotenv()
 
     if not Path(STATIC_DIR / "index.html").exists():
         raise SystemExit("static/index.html not found")

@@ -29,6 +29,9 @@ class DemoContractTests(unittest.TestCase):
         summary = summarize_results(results)
         self.assertEqual(len(results), 2)
         self.assertGreater(summary["improved_avg"], summary["current_avg"])
+        self.assertIn("score_breakdown", summary)
+        self.assertIn("prompt_summary", summary)
+        self.assertIn("next_step_mix", summary)
 
     def test_scoring_has_expected_breakdown(self):
         sources = load_corpus("improved")[:3]

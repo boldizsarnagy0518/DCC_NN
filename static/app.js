@@ -80,10 +80,26 @@ function renderSummary() {
   byId("currentAvg").textContent = summary.current_avg ?? 0;
   byId("improvedAvg").textContent = summary.improved_avg ?? 0;
   byId("deltaAvg").textContent = `+${summary.delta ?? 0}`;
-  byId("improvedPairs").textContent = `${summary.improved_pairs ?? 0}/${summary.compared_pairs ?? 0}`;
   byId("nnLinks").textContent = `${summary.current_nn_link_recommendations ?? 0} → ${
     summary.improved_nn_link_recommendations ?? 0
   }`;
+
+  byId("currentMentionPrompts").textContent = `${summary.current_prompts_with_nn_mentions ?? 0}/${
+    summary.current_total_prompts ?? 0
+  }`;
+  byId("improvedMentionPrompts").textContent = `${summary.improved_prompts_with_nn_mentions ?? 0}/${
+    summary.improved_total_prompts ?? 0
+  }`;
+  byId("currentMentions").textContent = summary.current_nn_mentions ?? 0;
+  byId("improvedMentions").textContent = summary.improved_nn_mentions ?? 0;
+  byId("currentLinkedPrompts").textContent = `${summary.current_prompts_with_nn_links ?? 0}/${
+    summary.current_total_prompts ?? 0
+  }`;
+  byId("improvedLinkedPrompts").textContent = `${summary.improved_prompts_with_nn_links ?? 0}/${
+    summary.improved_total_prompts ?? 0
+  }`;
+  byId("currentLinks").textContent = summary.current_nn_link_recommendations ?? 0;
+  byId("improvedLinks").textContent = summary.improved_nn_link_recommendations ?? 0;
 
   const modelSummary = summary.model_summary || {};
   byId("modelSummary").innerHTML = Object.entries(modelSummary)
@@ -120,6 +136,98 @@ function renderSummary() {
           <div class="bar-track"><div class="bar-fill delta" style="width:${Math.min(Math.max(values.delta, 0), 100)}%"></div></div>
           <strong>+${values.delta}</strong>
         </div>
+      `;
+    })
+    .join("");
+
+  renderPillarBreakdown(summary.score_breakdown || {});
+  renderNextStepMix(summary.next_step_mix || {});
+  renderPromptCoverage(summary.prompt_summary || []);
+  renderRecommendationCoverage();
+}
+
+function renderPillarBreakdown(scoreBreakdown) {
+  const labels = {
+    mention_quality: "Mention",
+    product_specificity: "Product specificity",
+    credibility: "Credibility",
+    actionability: "Actionability",
+  };
+  byId("pillarBreakdown").innerHTML = Object.entries(labels)
+    .map(([key, label]) => {
+      const item = scoreBreakdown[key] || {current: 0, improved: 0, delta: 0};
+      return `
+        <div class="pillar-row">
+          <span class="pillar-label">${escapeHtml(label)}</span>
+          <div class="dual-track">
+            <div class="bar-track"><div class="bar-fill" style="width:${Math.min(item.current * 4, 100)}%"></div></div>
+            <div class="bar-track"><div class="bar-fill improved" style="width:${Math.min(item.improved * 4, 100)}%"></div></div>
+          </div>
+          <span class="delta-text">${item.delta >= 0 ? "+" : ""}${item.delta}</span>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function renderNextStepMix(nextStepMix) {
+  const current = nextStepMix.current || {};
+  const improved = nextStepMix.improved || {};
+  const keys = [...new Set([...Object.keys(current), ...Object.keys(improved)])].sort();
+  if (!keys.length) {
+    byId("nextStepMix").innerHTML = `<p class="muted-text">No explicit NN next-step links found.</p>`;
+    return;
+  }
+  const maxValue = Math.max(...keys.map((key) => Math.max(current[key] || 0, improved[key] || 0)), 1);
+  byId("nextStepMix").innerHTML = keys
+    .map((key) => {
+      const before = current[key] || 0;
+      const after = improved[key] || 0;
+      return `
+        <div class="mix-row">
+          <span class="mix-label">${escapeHtml(key.replaceAll("_", " "))}</span>
+          <div class="dual-track">
+            <div class="bar-track"><div class="bar-fill" style="width:${(before / maxValue) * 100}%"></div></div>
+            <div class="bar-track"><div class="bar-fill improved" style="width:${(after / maxValue) * 100}%"></div></div>
+          </div>
+          <span class="delta-text">${before} → ${after}</span>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function renderPromptCoverage(promptRows) {
+  byId("promptCoverage").innerHTML = promptRows
+    .map((row) => {
+      const mentionText = `${row.current_mentions} → ${row.improved_mentions}`;
+      const linkClass = row.improved_links > row.current_links ? "status-good" : "status-weak";
+      const mentionClass = row.improved_mentions >= row.current_mentions ? "status-good" : "status-weak";
+      return `
+        <tr>
+          <td>${escapeHtml(row.prompt)}</td>
+          <td>${escapeHtml(row.category)}</td>
+          <td><strong>${row.current_avg} → ${row.improved_avg}</strong></td>
+          <td class="${mentionClass}">${mentionText}</td>
+          <td class="${linkClass}">${row.current_links} → ${row.improved_links}</td>
+        </tr>
+      `;
+    })
+    .join("");
+}
+
+function renderRecommendationCoverage() {
+  const recommendations = state.config?.recommendations || [];
+  byId("recommendationCoverage").innerHTML = recommendations
+    .map((rec) => {
+      return `
+        <article class="coverage-card">
+          <span class="rec-id">${escapeHtml(rec.id)}</span>
+          <strong>${escapeHtml(rec.title)}</strong>
+          <p>${escapeHtml(rec.horizon)} · ${escapeHtml(rec.pillar)} · ${escapeHtml(rec.priority)}</p>
+          <p><span class="status-good">${rec.demo_asset_count || 0}</span> demo asset signal(s)</p>
+          <p>${escapeHtml(rec.demo_signal)}</p>
+        </article>
       `;
     })
     .join("");
@@ -236,13 +344,17 @@ function renderSources(promptId) {
 }
 
 async function loadCached() {
-  setStatus("Loading cached benchmark...");
+  setStatus("Loading generated benchmark results...");
   const payload = await fetchJson("/api/cached");
   state.results = payload.results;
   state.summary = payload.summary;
   renderSummary();
   renderResults();
-  setStatus("Cached controlled benchmark loaded. No external model calls were made.");
+  const source = payload.source === "results/latest_results.json" ? "generated response file" : "on-demand fallback";
+  byId("runMeta").textContent = payload.generated_at
+    ? `Loaded ${source}, generated at ${payload.generated_at}.`
+    : `Loaded ${source}. Use uv run python generate_responses.py to refresh.`;
+  setStatus("Benchmark results loaded.");
 }
 
 async function runBenchmark(full = false) {
