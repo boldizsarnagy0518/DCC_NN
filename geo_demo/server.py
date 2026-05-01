@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from .data import STATIC_DIR, corpus_modes, load_corpus, load_prompts, load_recommendations
+from .data import STATIC_DIR, corpus_modes, load_baseline_visibility, load_corpus, load_prompts, load_recommendations
 from .env import load_dotenv
 from .providers import (
     PROVIDERS,
@@ -366,6 +366,7 @@ class DemoHandler(BaseHTTPRequestHandler):
                 {
                     "prompts": load_prompts(),
                     "recommendations": recommendation_coverage(),
+                    "baseline_visibility": load_baseline_visibility(),
                     "providers": provider_status(),
                     "corpus_modes": corpus_modes(),
                 },
@@ -469,7 +470,7 @@ class DemoHandler(BaseHTTPRequestHandler):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run the NN GEO controlled RAG demo dashboard.")
+    parser = argparse.ArgumentParser(description="Run the NN GEO recommendation impact simulator dashboard.")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", default=8765, type=int)
     args = parser.parse_args()
@@ -480,7 +481,7 @@ def main():
         raise SystemExit("static/index.html not found")
 
     server = ThreadingHTTPServer((args.host, args.port), DemoHandler)
-    print(f"NN GEO demo dashboard running at http://{args.host}:{args.port}")
+    print(f"NN GEO recommendation impact simulator running at http://{args.host}:{args.port}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
