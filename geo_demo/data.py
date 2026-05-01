@@ -22,6 +22,10 @@ def load_recommendations():
     return load_json("recommendations.json")
 
 
+def load_baseline_visibility():
+    return load_json("baseline_visibility.json")
+
+
 def load_corpus(mode):
     if mode not in {"current", "improved"}:
         raise ValueError(f"Unknown corpus mode: {mode}")
