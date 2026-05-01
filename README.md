@@ -2,22 +2,49 @@
 
 Recommendation impact POC for the NN GenAI visibility / GEO case.
 
-The dashboard validates whether NN's actionable GEO recommendations could improve GenAI-style answer quality. It compares two controlled source environments:
+The project now combines two layers:
 
-- **Without recommendation mockups:** a current-like NN/public source environment with weaker Q&A, credibility and next-step signals.
-- **With recommendation mockups:** the same environment enriched with mocked GEO assets based on the recommendations: Q&A product pages, decision guides, original research, third-party proof, calculators, entity signals and explicit next-step links.
+1. **Observed pre-mockup AI visibility baseline**  
+   48 Hungarian insurance prompts were tested across OpenAI / ChatGPT, Google / Gemini and Anthropic / Claude. This created the baseline view of how often NN appears today and how often answers include explicit NN links/citations.
 
-The key question is:
+2. **Controlled recommendation mockup validation**  
+   The dashboard compares GenAI-style answers without and with mocked GEO assets based on the actionable recommendations.
+
+The key business question is:
 
 ```text
-If NN implemented the recommended GEO assets, would GenAI-style answers become more specific, more credible and more actionable for users?
+Can the recommended NN GEO assets increase NN's GenAI presence, explicit citations/links and answer actionability?
 ```
+
+## Observed Baseline
+
+The pre-mockup benchmark showed that NN already has a strong baseline, but the visibility is not yet actionable enough.
+
+| Metric | Observed baseline |
+|---|---:|
+| Prompts tested | 48 |
+| Model outputs | 144 |
+| NN prompt-level presence | 64 / 144 |
+| NN unique prompt coverage | 32 / 48 |
+| NN vs competitor average | 2.0× |
+| Explicit NN cite/link references | 5 / 144 |
+
+Strategic interpretation:
+
+> NN is already visible in GenAI answers, but the opportunity is to move from being mentioned to being cited, linked and recommended as the next step.
+
+Therefore, the mockup validation should not only improve answer quality. It should specifically aim to:
+
+- increase NN prompt-level presence where NN is currently absent;
+- increase explicit `nn.hu` citations and links;
+- make NN mentions more product-specific;
+- direct users toward calculators, product Q&A pages, decision guides, research assets and advisor handoff paths.
 
 ## Methodology Note
 
 This dashboard is a recommendation impact POC for NN's GenAI / GEO strategy.
 
-The goal is to validate whether the actionable recommendations could improve GenAI-style answer quality. The dashboard compares two controlled source environments:
+The dashboard compares two controlled source environments:
 
 1. **Without recommendation mockups**  
    A current-like NN/public source environment with weaker Q&A, credibility and next-step signals.
@@ -30,6 +57,25 @@ The same prompts and model labels are used in both runs. This isolates the effec
 The dashboard does not claim to measure live public ChatGPT, Gemini or Claude rankings. Websearch is intentionally not required for the core POC, because the goal is recommendation validation under controlled conditions. A future version could add live web visibility monitoring as a separate extension.
 
 In live API mode, provider models receive the same controlled source package. They do not browse the public web in this version.
+
+## Recommended Validation Mode
+
+Mock/local mode is useful for technical testing, UI stability and backup demos.
+
+However, the real recommendation-impact validation should be run with at least one live LLM provider using controlled sources. Gemini is enough for a low-cost POC run.
+
+```powershell
+uv run python generate_responses.py --live --models gemini
+uv run python dashboard.py --host 127.0.0.1 --port 8765
+```
+
+In the dashboard, check that the answer badges show:
+
+```text
+API - controlled sources
+```
+
+If the badge shows `Mock fallback`, the provider call failed and the result should not be treated as LLM validation evidence.
 
 ## Recommended Workflow With UV
 
@@ -54,10 +100,17 @@ Live API mode, after filling `.env`:
 uv run python generate_responses.py --live
 ```
 
+Gemini-only live validation:
+
+```powershell
+uv run python generate_responses.py --live --models gemini
+```
+
 This writes:
 
 ```text
 results/latest_results.json
+results/latest_results.csv
 ```
 
 ### 2. Start dashboard
@@ -89,7 +142,7 @@ uv run python -m unittest discover -s tests
 
 ## API Keys
 
-The dashboard works without external API calls through the cached/local mock benchmark.
+The dashboard works without external API calls through the cached/local mock benchmark. This is useful for checking the dashboard, but it is not the strongest validation evidence.
 
 To run live provider calls, copy `.env.example` to `.env` and fill in the relevant keys:
 
@@ -101,38 +154,34 @@ notepad .env
 Example `.env` content:
 
 ```text
-OPENAI_API_KEY=...
+OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4.1-mini
 
 GEMINI_API_KEY=...
 GEMINI_MODEL=gemini-2.5-flash
 
-ANTHROPIC_API_KEY=...
+ANTHROPIC_API_KEY=
 ANTHROPIC_MODEL=claude-3-5-haiku-latest
 ```
 
-Then start the server:
+Then run:
 
 ```powershell
-uv run python generate_responses.py --live
+uv run python generate_responses.py --live --models gemini
 uv run python dashboard.py --host 127.0.0.1 --port 8765
 ```
-
-In the UI, enable **Use provider APIs with controlled sources** to call the real providers. If a key is missing or an API call fails, the app falls back to local mock output for that provider.
 
 You can also set keys directly in PowerShell instead of using `.env`:
 
 ```powershell
-$env:OPENAI_API_KEY="..."
 $env:GEMINI_API_KEY="..."
-$env:ANTHROPIC_API_KEY="..."
-uv run python generate_responses.py --live
+uv run python generate_responses.py --live --models gemini
 uv run python dashboard.py --host 127.0.0.1 --port 8765
 ```
 
 ## What The Dashboard Measures
 
-The dashboard runs the same Hungarian insurance prompts against three model labels:
+The dashboard runs the same Hungarian insurance prompts against model labels such as:
 
 - ChatGPT / OpenAI
 - Gemini
@@ -153,19 +202,13 @@ The main score is an **answer quality / recommendation impact score**, not a liv
 
 ## What You See On The Dashboard
 
-The dashboard is split into two clear views:
+The dashboard includes:
 
+- **Observed pre-mockup AI visibility baseline:** 48 prompts, 144 outputs, 64 NN prompt-level presences and 5 explicit NN cite/link references.
 - **Without recommendation mockups:** results using the current-like source corpus.
 - **With recommendation mockups:** results using the mocked GEO recommendation assets.
-
-The top of the dashboard shows executive KPIs:
-
-- Recommendation impact score without and with recommendation mockups.
-- Answer quality lift.
-- NN next-step recommendations before vs after.
-- How many prompts mention NN.
-- How many prompts link to NN.
-- Total NN mentions and total explicit NN links.
+- **Answer quality lift:** whether the mockup assets improve answer specificity, credibility and actionability.
+- **NN next-step recommendations:** whether the mockup assets increase explicit `nn.hu` links/citations.
 
 Below that, the dashboard explains why the after-state improves:
 
@@ -173,38 +216,15 @@ Below that, the dashboard explains why the after-state improves:
 - **Next-step Destination Mix:** what kind of NN asset gets linked, such as calculator, product Q&A, guide, research or entity page.
 - **Source Domain Mix:** which domains or local source groups appear in the retrieved evidence.
 - **Competitor Mention Check:** controlled-answer mentions of UNIQA, Generali, Allianz and Groupama.
-- **Actionable Recommendation Coverage:** how the mocked assets map to the 10 recommendations in the context file, including validation hypothesis and expected signal.
+- **Actionable Recommendation Coverage:** how the mocked assets map to the recommendations, including validation hypothesis and expected signal.
 - **Prompt-level Coverage:** which prompts mention NN and which prompts include explicit NN links.
 - **How to Read the KPIs:** short definitions for the scoring categories.
-
-The final test section lets you inspect individual prompts, compare model outputs, and see which local sources were retrieved.
 
 The dashboard also exposes a CSV export:
 
 ```text
 GET /api/export.csv
 ```
-
-The generator writes the same export to:
-
-```text
-results/latest_results.csv
-```
-
-Each answer shows whether it came from:
-
-- `API - controlled sources`
-- `Mock output`
-- `Mock fallback`
-
-Each source also shows a status label:
-
-- `current-like source`
-- `existing NN asset`
-- `recommendation mockup asset`
-- `third-party example`
-- `technical audit signal`
-- `current market context`
 
 ## Current Demo Assets
 
@@ -231,7 +251,7 @@ The improved corpus adds mocked recommendation assets:
 
 The POC validates whether the proposed assets make NN easier for GenAI systems to use in answers:
 
-- Conversational product pages should improve product specificity.
+- Conversational product pages should improve product specificity and prompt-level NN presence.
 - Entity/schema mockups should improve credibility and source clarity.
 - Third-party proof should improve comparison and trust signals.
 - Original research should create a citable authority asset.
@@ -269,10 +289,10 @@ Example `POST /api/run` body:
 
 ## Suggested Presentation Line
 
-This POC validates whether NN's actionable GEO recommendations could improve GenAI-style answers. It compares the same prompts without and with recommendation mockup assets, then measures whether answers become more specific, credible and actionable.
+This POC starts from an observed 48-prompt GenAI visibility baseline. NN is already present in 64 out of 144 model-prompt outputs, but explicit NN links/citations are rare. The controlled mockup run validates whether the recommended GEO assets can turn NN from a mentioned brand into a cited and actionable next step.
 
 Short Hungarian version:
 
 ```text
-Nem a teljes publikus webet próbáljuk újramodellezni. Azt validáljuk, hogy az ajánlott NN assetek kontrollált környezetben javítanák-e a GenAI válaszokat.
+A kiinduló 48 promptos baseline alapján NN már erősen jelen van a GenAI válaszokban, de kevés az explicit NN link/cite. A POC azt validálja, hogy az ajánlott GEO mockup assetek képesek-e az NN jelenlétet konkrétabb, hivatkozhatóbb és actionable irányba vinni.
 ```
