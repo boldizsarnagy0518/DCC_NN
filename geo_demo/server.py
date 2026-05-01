@@ -143,7 +143,7 @@ def run_single(prompt_item, corpus_mode, provider_id, use_live=False):
     }
 
 
-def run_benchmark(prompt_ids=None, corpus_mode="both", models=None, use_live=False):
+def run_benchmark(prompt_ids=None, corpus_mode="improved", models=None, use_live=False):
     prompts = load_prompts()
     prompt_lookup = {prompt["id"]: prompt for prompt in prompts}
     if prompt_ids:
@@ -164,6 +164,7 @@ def run_benchmark(prompt_ids=None, corpus_mode="both", models=None, use_live=Fal
 
 
 def summarize_results(results):
+    baseline = load_baseline_visibility()
     by_mode = {"current": [], "improved": []}
     score_keys = ("mention_quality", "product_specificity", "credibility", "actionability")
     score_breakdown = {
@@ -188,14 +189,12 @@ def summarize_results(results):
         mode = result["corpus_mode"]
         prompt_id = result["prompt_id"]
         prompts_by_mode.setdefault(mode, set()).add(prompt_id)
-        by_mode.setdefault(result["corpus_mode"], []).append(total)
+        by_mode.setdefault(mode, []).append(total)
         for key in score_keys:
             score_breakdown.setdefault(mode, {}).setdefault(key, []).append(result["scores"].get(key, 0))
         link_count = len(result.get("link_recommendations", []))
-        links_by_mode[result["corpus_mode"]] = links_by_mode.get(result["corpus_mode"], 0) + link_count
-        linked_answers_by_mode[result["corpus_mode"]] = linked_answers_by_mode.get(result["corpus_mode"], 0) + (
-            1 if link_count else 0
-        )
+        links_by_mode[mode] = links_by_mode.get(mode, 0) + link_count
+        linked_answers_by_mode[mode] = linked_answers_by_mode.get(mode, 0) + (1 if link_count else 0)
         for link in result.get("link_recommendations", []):
             link_type = link.get("type") or "unknown"
             next_step_mix.setdefault(mode, {})[link_type] = next_step_mix.setdefault(mode, {}).get(link_type, 0) + 1
@@ -208,14 +207,14 @@ def summarize_results(results):
             competitor_mentions.setdefault(mode, {}).setdefault(competitor, 0)
             competitor_mentions[mode][competitor] += count
         mention_count = result.get("nn_mentions", 0)
-        mentions_by_mode[result["corpus_mode"]] = mentions_by_mode.get(result["corpus_mode"], 0) + mention_count
+        mentions_by_mode[mode] = mentions_by_mode.get(mode, 0) + mention_count
         if mention_count:
             mention_prompts_by_mode.setdefault(mode, set()).add(prompt_id)
         if link_count:
             link_prompts_by_mode.setdefault(mode, set()).add(prompt_id)
-        by_model.setdefault(result["model"], {}).setdefault(result["corpus_mode"], []).append(total)
+        by_model.setdefault(result["model"], {}).setdefault(mode, []).append(total)
         key = (result["prompt_id"], result["model"])
-        prompt_deltas.setdefault(key, {})[result["corpus_mode"]] = total
+        prompt_deltas.setdefault(key, {})[mode] = total
         prompt_row = prompt_summary.setdefault(
             prompt_id,
             {
@@ -243,6 +242,10 @@ def summarize_results(results):
 
     current_avg = avg(by_mode.get("current", []))
     improved_avg = avg(by_mode.get("improved", []))
+    has_current = bool(by_mode.get("current"))
+    has_improved = bool(by_mode.get("improved"))
+    validation_mode = "controlled_ab" if has_current and has_improved else "mockup_only"
+
     improved_pairs = 0
     compared_pairs = 0
     for pair in prompt_deltas.values():
@@ -256,7 +259,7 @@ def summarize_results(results):
         model_summary[model] = {
             "current": avg(modes.get("current", [])),
             "improved": avg(modes.get("improved", [])),
-            "delta": round(avg(modes.get("improved", [])) - avg(modes.get("current", [])), 1),
+            "delta": round(avg(modes.get("improved", [])) - avg(modes.get("current", [])), 1) if has_current else None,
         }
 
     breakdown_summary = {}
@@ -266,7 +269,7 @@ def summarize_results(results):
         breakdown_summary[key] = {
             "current": current_score,
             "improved": improved_score,
-            "delta": round(improved_score - current_score, 1),
+            "delta": round(improved_score - current_score, 1) if has_current else None,
         }
 
     prompt_rows = []
@@ -275,14 +278,19 @@ def summarize_results(results):
         improved_score = avg(row.pop("improved_scores"))
         row["current_avg"] = current_score
         row["improved_avg"] = improved_score
-        row["delta"] = round(improved_score - current_score, 1)
+        row["delta"] = round(improved_score - current_score, 1) if current_score else None
         prompt_rows.append(row)
     prompt_rows.sort(key=lambda item: item["prompt_id"])
 
+    baseline_links = baseline.get("baseline_explicit_nn_link_references", 0)
+    baseline_presence = baseline.get("nn_presence_total", 0)
+
     return {
+        "validation_mode": validation_mode,
+        "observed_baseline": baseline,
         "current_avg": current_avg,
         "improved_avg": improved_avg,
-        "delta": round(improved_avg - current_avg, 1),
+        "delta": round(improved_avg - current_avg, 1) if has_current else None,
         "improved_pairs": improved_pairs,
         "compared_pairs": compared_pairs,
         "model_summary": model_summary,
@@ -302,9 +310,13 @@ def summarize_results(results):
         "improved_prompts_with_nn_links": len(link_prompts_by_mode.get("improved", set())),
         "current_nn_link_recommendations": links_by_mode.get("current", 0),
         "improved_nn_link_recommendations": links_by_mode.get("improved", 0),
-        "link_recommendation_delta": links_by_mode.get("improved", 0) - links_by_mode.get("current", 0),
+        "link_recommendation_delta": links_by_mode.get("improved", 0) - links_by_mode.get("current", 0) if has_current else None,
         "current_linked_answers": linked_answers_by_mode.get("current", 0),
         "improved_linked_answers": linked_answers_by_mode.get("improved", 0),
+        "observed_baseline_nn_presence": baseline_presence,
+        "observed_baseline_nn_links": baseline_links,
+        "mockup_vs_observed_link_delta": links_by_mode.get("improved", 0) - baseline_links,
+        "mockup_vs_observed_presence_delta": mentions_by_mode.get("improved", 0) - baseline_presence,
     }
 
 
@@ -375,7 +387,7 @@ class DemoHandler(BaseHTTPRequestHandler):
 
         if parsed.path == "/api/sources":
             query = parse_qs(parsed.query)
-            mode = query.get("mode", ["current"])[0]
+            mode = query.get("mode", ["improved"])[0]
             try:
                 json_response(self, {"mode": mode, "sources": load_corpus(mode)})
             except ValueError as exc:
@@ -396,7 +408,7 @@ class DemoHandler(BaseHTTPRequestHandler):
                     },
                 )
                 return
-            results = run_benchmark(use_live=False)
+            results = run_benchmark(use_live=False, corpus_mode="improved")
             json_response(
                 self,
                 {
@@ -410,7 +422,7 @@ class DemoHandler(BaseHTTPRequestHandler):
 
         if parsed.path == "/api/export.csv":
             latest = load_latest_results()
-            results = latest["results"] if latest else run_benchmark(use_live=False)
+            results = latest["results"] if latest else run_benchmark(use_live=False, corpus_mode="improved")
             text_response(self, results_to_csv(results), content_type="text/csv; charset=utf-8")
             return
 
@@ -427,7 +439,7 @@ class DemoHandler(BaseHTTPRequestHandler):
             prompt_ids = payload.get("prompt_ids")
             if payload.get("prompt_id"):
                 prompt_ids = [payload["prompt_id"]]
-            corpus_mode = payload.get("corpus_mode", "both")
+            corpus_mode = payload.get("corpus_mode", "improved")
             models = payload.get("models") or list(PROVIDERS)
             use_live = bool(payload.get("use_live", False))
             results = run_benchmark(prompt_ids=prompt_ids, corpus_mode=corpus_mode, models=models, use_live=use_live)
