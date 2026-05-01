@@ -7,8 +7,8 @@ The project now combines two layers:
 1. **Observed pre-mockup AI visibility baseline**  
    48 Hungarian insurance prompts were tested across OpenAI / ChatGPT, Google / Gemini and Anthropic / Claude. This created the baseline view of how often NN appears today and how often answers include explicit NN links/citations.
 
-2. **Controlled recommendation mockup validation**  
-   The dashboard compares GenAI-style answers without and with mocked GEO assets based on the actionable recommendations.
+2. **Mockup-only recommendation validation**  
+   The dashboard uses the observed baseline as the before-state, then runs only the improved/mockup source environment to test whether the actionable recommendations can increase NN mentions, explicit citations/links and answer actionability.
 
 The key business question is:
 
@@ -18,7 +18,7 @@ Can the recommended NN GEO assets increase NN's GenAI presence, explicit citatio
 
 ## Observed Baseline
 
-The pre-mockup benchmark showed that NN already has a strong baseline, but the visibility is not yet actionable enough.
+The uploaded pre-mockup dashboard showed that NN already has a strong baseline, but the visibility is not yet actionable enough.
 
 | Metric | Observed baseline |
 |---|---:|
@@ -44,25 +44,31 @@ Therefore, the mockup validation should not only improve answer quality. It shou
 
 This dashboard is a recommendation impact POC for NN's GenAI / GEO strategy.
 
-The dashboard compares two controlled source environments:
+The current workflow uses:
 
-1. **Without recommendation mockups**  
-   A current-like NN/public source environment with weaker Q&A, credibility and next-step signals.
+1. **Observed baseline**  
+   The already collected Excel/HTML benchmark from 48 prompts and 3 AI model families.
 
-2. **With recommendation mockups**  
-   The same environment enriched with mocked GEO assets based on the recommendations, such as product Q&A pages, decision guides, calculators, original research, entity signals and third-party proof.
+2. **Mockup validation run**  
+   The improved source environment enriched with mocked GEO assets based on the recommendations.
 
-The same prompts and model labels are used in both runs. This isolates the effect of the recommendation assets.
+This means the live API run does **not** need to regenerate the pre-mockup state. It only tests the recommendation mockup assets.
+
+Request count for the cheapest full validation run:
+
+```text
+48 prompts × 1 corpus mode × 1 model = 48 requests
+```
 
 The dashboard does not claim to measure live public ChatGPT, Gemini or Claude rankings. Websearch is intentionally not required for the core POC, because the goal is recommendation validation under controlled conditions. A future version could add live web visibility monitoring as a separate extension.
 
-In live API mode, provider models receive the same controlled source package. They do not browse the public web in this version.
+In live API mode, provider models receive the controlled mockup source package. They do not browse the public web in this version.
 
 ## Recommended Validation Mode
 
 Mock/local mode is useful for technical testing, UI stability and backup demos.
 
-However, the real recommendation-impact validation should be run with at least one live LLM provider using controlled sources. Gemini is enough for a low-cost POC run.
+However, the real recommendation-impact validation should be run with at least one live LLM provider using controlled mockup sources. Gemini is enough for a low-cost POC run.
 
 ```powershell
 uv run python generate_responses.py --live --models gemini
@@ -83,8 +89,8 @@ UV is the project runner. No external Python packages are required.
 
 Use the demo in two steps:
 
-1. Generate benchmark responses.
-2. Start the dashboard that displays those responses.
+1. Generate mockup validation responses.
+2. Start the dashboard that displays the observed baseline and mockup results.
 
 ### 1. Generate responses
 
@@ -104,6 +110,20 @@ Gemini-only live validation:
 
 ```powershell
 uv run python generate_responses.py --live --models gemini
+```
+
+By default, `generate_responses.py` now runs:
+
+```text
+--corpus-mode improved
+```
+
+because the pre-mockup baseline is already imported from the uploaded Excel/HTML benchmark.
+
+If you explicitly want the old controlled A/B run, use:
+
+```powershell
+uv run python generate_responses.py --live --models gemini --corpus-mode both
 ```
 
 This writes:
@@ -181,13 +201,12 @@ uv run python dashboard.py --host 127.0.0.1 --port 8765
 
 ## What The Dashboard Measures
 
-The dashboard runs the same Hungarian insurance prompts against model labels such as:
+The dashboard now compares:
 
-- ChatGPT / OpenAI
-- Gemini
-- Claude
+- the **observed pre-mockup baseline** from the uploaded Excel/HTML dashboard;
+- the **mockup validation run** using the improved recommendation assets.
 
-For each answer it scores:
+For each mockup answer it scores:
 
 - **Mention quality:** whether NN is mentioned clearly and usefully.
 - **Product specificity:** whether the answer connects NN to concrete insurance products or decision situations.
@@ -205,19 +224,18 @@ The main score is an **answer quality / recommendation impact score**, not a liv
 The dashboard includes:
 
 - **Observed pre-mockup AI visibility baseline:** 48 prompts, 144 outputs, 64 NN prompt-level presences and 5 explicit NN cite/link references.
-- **Without recommendation mockups:** results using the current-like source corpus.
-- **With recommendation mockups:** results using the mocked GEO recommendation assets.
-- **Answer quality lift:** whether the mockup assets improve answer specificity, credibility and actionability.
-- **NN next-step recommendations:** whether the mockup assets increase explicit `nn.hu` links/citations.
+- **Mockup answer quality:** recommendation impact score from the improved/mockup corpus.
+- **Link/cite uplift vs observed:** mockup explicit NN links minus the observed baseline of 5 explicit NN link/cite references.
+- **NN next-step recommendations:** observed explicit links -> mockup explicit links.
 
-Below that, the dashboard explains why the after-state improves:
+Below that, the dashboard explains why the mockup run improves:
 
 - **GEO Pillar Breakdown:** mention quality, product specificity, credibility and actionability.
 - **Next-step Destination Mix:** what kind of NN asset gets linked, such as calculator, product Q&A, guide, research or entity page.
 - **Source Domain Mix:** which domains or local source groups appear in the retrieved evidence.
-- **Competitor Mention Check:** controlled-answer mentions of UNIQA, Generali, Allianz and Groupama.
+- **Competitor Mention Check:** mockup-answer mentions of UNIQA, Generali, Allianz and Groupama.
 - **Actionable Recommendation Coverage:** how the mocked assets map to the recommendations, including validation hypothesis and expected signal.
-- **Prompt-level Coverage:** which prompts mention NN and which prompts include explicit NN links.
+- **Prompt-level Mockup Coverage:** which prompts mention NN and which prompts include explicit NN links in the mockup run.
 - **How to Read the KPIs:** short definitions for the scoring categories.
 
 The dashboard also exposes a CSV export:
@@ -228,15 +246,9 @@ GET /api/export.csv
 
 ## Current Demo Assets
 
-The current corpus includes NN's existing directionally relevant assets, including:
+The current corpus is kept for optional controlled A/B testing only.
 
-- NN life insurance product page.
-- NN pension product context.
-- NN pension calculator.
-- NN Egészség Útlevél health insurance context.
-- A current technical GEO gap summary.
-
-The improved corpus adds mocked recommendation assets:
+The improved corpus is the main validation corpus and adds mocked recommendation assets:
 
 - Conversational product Q&A pages.
 - Life insurance cover estimator.
@@ -270,29 +282,29 @@ A later version could add real web visibility monitoring, search-grounded APIs, 
 ```text
 GET  /api/config
 GET  /api/cached
-GET  /api/sources?mode=current
 GET  /api/sources?mode=improved
+GET  /api/sources?mode=current
 GET  /api/export.csv
 POST /api/run
 ```
 
-Example `POST /api/run` body:
+Example `POST /api/run` body for mockup-only validation:
 
 ```json
 {
   "prompt_id": "p01",
-  "corpus_mode": "both",
-  "models": ["openai", "gemini", "claude"],
-  "use_live": false
+  "corpus_mode": "improved",
+  "models": ["gemini"],
+  "use_live": true
 }
 ```
 
 ## Suggested Presentation Line
 
-This POC starts from an observed 48-prompt GenAI visibility baseline. NN is already present in 64 out of 144 model-prompt outputs, but explicit NN links/citations are rare. The controlled mockup run validates whether the recommended GEO assets can turn NN from a mentioned brand into a cited and actionable next step.
+This POC starts from an observed 48-prompt GenAI visibility baseline. NN is already present in 64 out of 144 model-prompt outputs, but explicit NN links/citations are rare. The mockup-only validation run tests whether the recommended GEO assets can turn NN from a mentioned brand into a cited and actionable next step — without paying for a second pre-mockup API run.
 
 Short Hungarian version:
 
 ```text
-A kiinduló 48 promptos baseline alapján NN már erősen jelen van a GenAI válaszokban, de kevés az explicit NN link/cite. A POC azt validálja, hogy az ajánlott GEO mockup assetek képesek-e az NN jelenlétet konkrétabb, hivatkozhatóbb és actionable irányba vinni.
+A kiinduló 48 promptos baseline alapján NN már erősen jelen van a GenAI válaszokban, de kevés az explicit NN link/cite. Ezért az API-val már csak a mockup asseteket futtatjuk, és azt validáljuk, hogy ezek képesek-e az NN jelenlétet konkrétabb, hivatkozhatóbb és actionable irányba vinni.
 ```
