@@ -64,6 +64,30 @@ function renderConfig() {
     .join("");
 
   renderProviderStatus();
+  renderObservedBaseline();
+}
+
+function renderObservedBaseline() {
+  const baseline = state.config?.baseline_visibility;
+  if (!baseline) {
+    return;
+  }
+  byId("observedPrompts").textContent = baseline.prompts_tested ?? "-";
+  byId("observedOutputs").textContent = baseline.model_outputs ?? "-";
+  byId("observedPresence").textContent = baseline.nn_presence_total ?? "-";
+  byId("observedLinks").textContent = baseline.baseline_explicit_nn_link_references ?? "-";
+  byId("observedReading").textContent = baseline.strategic_reading || "";
+  byId("baselineTargets").innerHTML = (baseline.target_metrics || [])
+    .map((item) => {
+      return `
+        <article class="target-item">
+          <strong>${escapeHtml(item.metric)}</strong>
+          <span>Baseline: ${escapeHtml(item.baseline)}</span>
+          <p>${escapeHtml(item.target_direction)}</p>
+        </article>
+      `;
+    })
+    .join("");
 }
 
 function renderProviderStatus() {
