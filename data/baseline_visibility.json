@@ -1,0 +1,67 @@
+{
+  "title": "Observed pre-mockup AI visibility baseline",
+  "source": "Manual benchmark from uploaded Excel and prompt presence dashboard",
+  "method": "48 Hungarian insurance prompts were tested across OpenAI / ChatGPT, Google / Gemini and Anthropic / Claude. A brand is counted as present when it appeared at least once in a model's answer for a given prompt.",
+  "prompts_tested": 48,
+  "model_outputs": 144,
+  "models": [
+    {
+      "id": "openai",
+      "label": "OpenAI / ChatGPT",
+      "nn_presence": 21,
+      "total_prompts": 48,
+      "competitor_average": 11.0,
+      "nn_vs_competitor_average": 1.9,
+      "baseline_nn_link_references": 1
+    },
+    {
+      "id": "gemini",
+      "label": "Google / Gemini",
+      "nn_presence": 24,
+      "total_prompts": 48,
+      "competitor_average": 10.1,
+      "nn_vs_competitor_average": 2.4,
+      "baseline_nn_link_references": 1
+    },
+    {
+      "id": "claude",
+      "label": "Anthropic / Claude",
+      "nn_presence": 19,
+      "total_prompts": 48,
+      "competitor_average": 10.5,
+      "nn_vs_competitor_average": 1.8,
+      "baseline_nn_link_references": 3
+    }
+  ],
+  "nn_presence_total": 64,
+  "nn_presence_unique_prompts": 32,
+  "nn_presence_share_of_outputs": 0.444,
+  "nn_unique_prompt_coverage_share": 0.667,
+  "nn_vs_competitor_average_total": 2.0,
+  "baseline_explicit_nn_link_references": 5,
+  "baseline_explicit_nn_link_prompt_coverage": 4,
+  "baseline_explicit_nn_link_response_share": 0.035,
+  "strategic_reading": "NN starts from a strong prompt-level presence baseline, but the next opportunity is to increase product-specific, citable and actionable visibility. The mockup assets should not only increase NN mentions, but turn mentions into explicit NN next-step links and citations.",
+  "target_metrics": [
+    {
+      "metric": "NN prompt-level presence",
+      "baseline": "64 / 144 model-prompt outputs",
+      "target_direction": "Increase or defend strong baseline while improving quality of presence"
+    },
+    {
+      "metric": "NN unique prompt coverage",
+      "baseline": "32 / 48 prompts",
+      "target_direction": "Increase coverage in prompts where NN is currently absent"
+    },
+    {
+      "metric": "Explicit NN cite/link references",
+      "baseline": "5 / 144 model-prompt outputs",
+      "target_direction": "Increase explicit nn.hu links to product pages, calculators, guides, research and advisor handoff"
+    },
+    {
+      "metric": "Actionable visibility",
+      "baseline": "NN is mentioned more often than the average competitor, but links/cites are limited",
+      "target_direction": "Move from brand mention to recommended next step"
+    }
+  ]
+}
