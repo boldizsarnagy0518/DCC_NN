@@ -13,12 +13,12 @@
         <p class="eyebrow">GenAI Recommendation Validation</p>
         <h1>NN GEO Recommendation Impact Simulator</h1>
         <p>
-          Validating whether NN's actionable GEO recommendations make AI-style answers more specific, credible and actionable.
+          From observed baseline visibility to recommendation mockups that aim to increase NN mentions, citations and actionable next-step links.
         </p>
       </div>
       <div class="hero-note">
         <strong>Controlled POC</strong>
-        <span>Controlled before/after source setup designed to isolate recommendation impact.</span>
+        <span>Observed baseline + controlled mockup run designed to isolate recommendation impact.</span>
       </div>
     </header>
 
@@ -34,19 +34,61 @@
         </div>
       </section>
 
+      <section class="observed-baseline-box">
+        <div class="panel-head">
+          <div>
+            <h2>Observed pre-mockup AI visibility baseline</h2>
+            <p class="prompt-text">Manual benchmark from 48 Hungarian insurance prompts across ChatGPT, Gemini and Claude.</p>
+          </div>
+          <span class="small">Observed baseline before recommendation mockups</span>
+        </div>
+        <div class="observed-kpis">
+          <article>
+            <span>Prompts tested</span>
+            <strong id="observedPrompts">48</strong>
+            <p>Hungarian insurance queries</p>
+          </article>
+          <article>
+            <span>Model outputs</span>
+            <strong id="observedOutputs">144</strong>
+            <p>48 prompts × 3 models</p>
+          </article>
+          <article>
+            <span>NN prompt-level presence</span>
+            <strong id="observedPresence">64</strong>
+            <p>Observed model-prompt outputs with NN present</p>
+          </article>
+          <article>
+            <span>Explicit NN cite/link baseline</span>
+            <strong id="observedLinks">5</strong>
+            <p>Observed nn.hu references in baseline answers</p>
+          </article>
+        </div>
+        <div class="baseline-target-grid">
+          <div class="baseline-reading">
+            <h3>Strategic reading</h3>
+            <p id="observedReading">
+              NN starts from a strong prompt-level presence baseline, but the next opportunity is to increase product-specific, citable and actionable visibility.
+            </p>
+          </div>
+          <div>
+            <h3>POC target</h3>
+            <div id="baselineTargets" class="target-list"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="methodology-box">
         <div>
           <h2>Methodology note</h2>
           <p>
-            This POC validates NN's actionable GEO recommendations through a controlled before/after mockup. The same
-            prompts are tested without and with recommendation mockup assets, while model setup and scoring logic remain constant.
-            Websearch is intentionally not used in the core POC so the impact of the proposed NN assets can be isolated.
+            This POC validates NN's actionable GEO recommendations through a controlled before/after mockup. The observed baseline shows where NN appeared before the mockups. The controlled run then tests whether recommendation mockup assets can increase NN mentions, explicit NN cites/links and answer quality.
           </p>
         </div>
         <div class="methodology-points">
           <span>Primary goal: recommendation impact validation</span>
-          <span>Measures controlled answer quality, not live ranking</span>
-          <span>Mockup assets represent proposed NN recommendations</span>
+          <span>Observed baseline: 48 prompts × 3 model answers</span>
+          <span>Mockup target: more NN mentions + more explicit NN links/cites</span>
         </div>
       </section>
 
@@ -59,10 +101,10 @@
           </p>
         </div>
         <div class="validation-flow">
-          <span>Same prompt</span>
-          <span>Same model setup</span>
-          <span>Different source assets</span>
-          <strong>Recommendation impact</strong>
+          <span>Observed baseline</span>
+          <span>Same prompt set</span>
+          <span>Mockup assets</span>
+          <strong>Mention + cite uplift</strong>
         </div>
       </section>
 
@@ -92,7 +134,7 @@
       <section class="two-state">
         <article class="state-card before">
           <div class="state-head">
-            <span class="state-label">Baseline</span>
+            <span class="state-label">Baseline run</span>
             <h2>Without recommendation mockups</h2>
           </div>
           <div class="state-metrics">
@@ -225,7 +267,7 @@
         <div class="panel-head">
           <div>
             <h2>Actionable Recommendation Coverage</h2>
-            <p class="prompt-text">How the mocked assets map back to the recommendations in the context file.</p>
+            <p class="prompt-text">How the mocked assets map back to the recommendations and the mention/cite uplift target.</p>
           </div>
           <span class="small">0-36 month roadmap</span>
         </div>
