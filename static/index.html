@@ -18,8 +18,8 @@
         </p>
       </div>
       <div class="hero-note">
-        <strong>Controlled POC</strong>
-        <span>Observed baseline + controlled mockup run designed to isolate recommendation impact.</span>
+        <strong>Mockup-only validation</strong>
+        <span>Observed baseline comes from the uploaded Excel/HTML dashboard; API calls are only used for the recommendation mockup run.</span>
       </div>
     </header>
 
@@ -27,7 +27,7 @@
       <section class="status-band">
         <div>
           <strong id="statusText">Loading demo...</strong>
-          <p id="runMeta" class="muted-text">Use `uv run python generate_responses.py` to refresh results.</p>
+          <p id="runMeta" class="muted-text">Use `uv run python generate_responses.py --live --models gemini` for the lowest-cost live validation.</p>
         </div>
         <div class="status-actions">
           <a class="export-link" href="/api/export.csv">Export CSV</a>
@@ -83,13 +83,13 @@
         <div>
           <h2>Methodology note</h2>
           <p>
-            This POC validates NN's actionable GEO recommendations through a controlled before/after mockup. The observed baseline shows where NN appeared before the mockups. The controlled run then tests whether recommendation mockup assets can increase NN mentions, explicit NN cites/links and answer quality.
+            This version uses the uploaded Excel/HTML dashboard as the observed pre-mockup baseline. The API run only tests the recommendation mockup assets, so a full Gemini-only validation requires 48 requests instead of 96.
           </p>
         </div>
         <div class="methodology-points">
-          <span>Primary goal: recommendation impact validation</span>
-          <span>Observed baseline: 48 prompts × 3 model answers</span>
-          <span>Mockup target: more NN mentions + more explicit NN links/cites</span>
+          <span>Observed baseline: imported from manual benchmark</span>
+          <span>API validation: mockup/improved corpus only</span>
+          <span>Target: more NN mentions + more explicit NN links/cites</span>
         </div>
       </section>
 
@@ -97,52 +97,51 @@
         <div>
           <h2>What this POC validates</h2>
           <p>
-            By keeping prompts and model labels constant, the dashboard isolates whether the proposed Q&A pages,
-            calculators, decision guides, entity signals, original research and third-party proof improve answer quality.
+            The controlled mockup run tests whether proposed Q&A pages, calculators, decision guides, entity signals, original research and third-party proof can make AI-style answers more specific, citable and actionable.
           </p>
         </div>
         <div class="validation-flow">
           <span>Observed baseline</span>
           <span>Same prompt set</span>
-          <span>Mockup assets</span>
+          <span>Mockup assets only</span>
           <strong>Mention + cite uplift</strong>
         </div>
       </section>
 
       <section class="executive-grid" aria-label="Executive KPI summary">
         <article class="kpi-card before">
-          <span>Without recommendation mockups</span>
-          <strong id="currentAvg">0</strong>
-          <p>Recommendation impact score</p>
+          <span>Observed baseline presence</span>
+          <strong id="currentAvg">64</strong>
+          <p>From uploaded Excel / HTML benchmark</p>
         </article>
         <article class="kpi-card after">
-          <span>With recommendation mockups</span>
+          <span>Mockup answer quality</span>
           <strong id="improvedAvg">0</strong>
           <p>Recommendation impact score</p>
         </article>
         <article class="kpi-card lift">
-          <span>Answer quality lift</span>
+          <span>Link / cite uplift vs observed</span>
           <strong id="deltaAvg">0</strong>
-          <p>Across selected prompts and models</p>
+          <p>Mockup explicit NN links minus observed baseline</p>
         </article>
         <article class="kpi-card link">
           <span>NN next-step recommendations</span>
-          <strong id="nnLinks">0 -> 0</strong>
-          <p>Explicit nn.hu next-step links</p>
+          <strong id="nnLinks">5 -> 0</strong>
+          <p>Observed explicit links -> mockup links</p>
         </article>
       </section>
 
       <section class="two-state">
         <article class="state-card before">
           <div class="state-head">
-            <span class="state-label">Baseline run</span>
-            <h2>Without recommendation mockups</h2>
+            <span class="state-label">Uploaded dashboard</span>
+            <h2>Observed pre-mockup baseline</h2>
           </div>
           <div class="state-metrics">
-            <div><strong id="currentMentionPrompts">0/0</strong><span>prompts mention NN</span></div>
-            <div><strong id="currentMentions">0</strong><span>NN mentions</span></div>
-            <div><strong id="currentLinkedPrompts">0/0</strong><span>prompts link NN</span></div>
-            <div><strong id="currentLinks">0</strong><span>NN links</span></div>
+            <div><strong id="currentMentionPrompts">32/48</strong><span>prompts mention NN</span></div>
+            <div><strong id="currentMentions">64</strong><span>NN presences</span></div>
+            <div><strong id="currentLinkedPrompts">4/48</strong><span>prompts link NN</span></div>
+            <div><strong id="currentLinks">5</strong><span>NN links/cites</span></div>
           </div>
         </article>
 
@@ -173,13 +172,13 @@
 
         <label class="toggle">
           <input id="liveToggle" type="checkbox">
-          <span>Use provider APIs with controlled sources</span>
+          <span>Use provider APIs with controlled mockup sources</span>
         </label>
 
         <div class="actions">
           <button id="cachedButton" type="button" class="secondary">Load generated results</button>
-          <button id="runPromptButton" type="button">Run selected prompt</button>
-          <button id="runFullButton" type="button">Run full benchmark</button>
+          <button id="runPromptButton" type="button">Run selected mockup prompt</button>
+          <button id="runFullButton" type="button">Run full mockup validation</button>
         </div>
       </section>
 
@@ -187,15 +186,15 @@
         <div class="panel">
           <div class="panel-head">
             <h2>Model Summary</h2>
-            <span class="small">Average recommendation impact score by model</span>
+            <span class="small">Average mockup recommendation impact score by model</span>
           </div>
           <table class="summary-table">
             <thead>
               <tr>
                 <th>Model</th>
-                <th>Baseline</th>
+                <th>Observed baseline</th>
                 <th>Mockup</th>
-                <th>Lift</th>
+                <th>Link/cite uplift</th>
               </tr>
             </thead>
             <tbody id="modelSummary"></tbody>
@@ -205,7 +204,7 @@
         <div class="panel visual-panel">
           <div class="panel-head">
             <h2>Impact View</h2>
-            <span class="small">Baseline vs mockup run</span>
+            <span class="small">Observed baseline vs mockup run</span>
           </div>
           <div id="impactBars" class="impact-bars"></div>
         </div>
@@ -215,7 +214,7 @@
         <div class="panel">
           <div class="panel-head">
             <h2>GEO Pillar Breakdown</h2>
-            <span class="small">Why the score changes</span>
+            <span class="small">Mockup answer quality drivers</span>
           </div>
           <div id="pillarBreakdown" class="pillar-breakdown"></div>
         </div>
@@ -223,7 +222,7 @@
         <div class="panel">
           <div class="panel-head">
             <h2>Next-step Destination Mix</h2>
-            <span class="small">What NN gets linked to</span>
+            <span class="small">What NN gets linked to in mockup answers</span>
           </div>
           <div id="nextStepMix" class="mix-list"></div>
         </div>
@@ -233,7 +232,7 @@
         <div class="panel">
           <div class="panel-head">
             <h2>Source Domain Mix</h2>
-            <span class="small">Where retrieved evidence comes from</span>
+            <span class="small">Where retrieved mockup evidence comes from</span>
           </div>
           <div id="sourceDomainMix" class="mix-list"></div>
         </div>
@@ -241,7 +240,7 @@
         <div class="panel">
           <div class="panel-head">
             <h2>Competitor Mention Check</h2>
-            <span class="small">Controlled-answer competitor mentions</span>
+            <span class="small">Mockup-answer competitor mentions</span>
           </div>
           <div id="competitorMix" class="mix-list"></div>
         </div>
@@ -278,10 +277,10 @@
       <section class="prompt-section">
         <div class="panel-head">
           <div>
-            <h2>Prompt-level Coverage</h2>
-            <p class="prompt-text">Mention and link coverage by tested user question.</p>
+            <h2>Prompt-level Mockup Coverage</h2>
+            <p class="prompt-text">Mockup answer mention and link coverage by tested user question.</p>
           </div>
-          <span class="small">Baseline vs mockup by prompt</span>
+          <span class="small">Improved corpus only</span>
         </div>
         <div class="table-scroll">
           <table class="summary-table prompt-table">
@@ -289,7 +288,7 @@
               <tr>
                 <th>Prompt</th>
                 <th>Category</th>
-                <th>Score</th>
+                <th>Mockup score</th>
                 <th>NN mentions</th>
                 <th>NN links</th>
               </tr>
@@ -302,7 +301,7 @@
       <section class="comparison">
         <div class="panel-head">
           <div>
-            <h2>Test Output</h2>
+            <h2>Mockup Test Output</h2>
             <p id="selectedPromptText" class="prompt-text"></p>
           </div>
           <span id="resultCount" class="small"></span>
@@ -312,13 +311,14 @@
 
       <section class="source-section">
         <div class="panel-head">
-          <h2>Retrieved Source Evidence</h2>
-          <span class="small">Local sources used for the selected prompt</span>
+          <h2>Retrieved Mockup Source Evidence</h2>
+          <span class="small">Local recommendation assets used for the selected prompt</span>
         </div>
         <div id="sourceEvidence" class="source-list"></div>
       </section>
     </main>
 
     <script src="/app.js"></script>
+    <script src="/mockup_only.js"></script>
   </body>
 </html>
