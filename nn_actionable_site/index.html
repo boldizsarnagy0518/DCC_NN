@@ -72,10 +72,10 @@
   <body>
     <div class="top-strip">
       <div>
-        <a href="https://www.nn.hu/vallalati-megoldasok" target="_blank" rel="noreferrer">Vállalati megoldások</a>
-        <a href="https://www.nn.hu/magazin" target="_blank" rel="noreferrer">Magazin</a>
-        <a href="https://www.nn.hu/karrier" target="_blank" rel="noreferrer">Karrier</a>
-        <a href="https://www.nn.hu/az-nn-rol/elerhetosegek" target="_blank" rel="noreferrer">Elérhetőségek</a>
+        <a href="#trust" data-route="trust">Vállalati megoldások</a>
+        <a href="#trust" data-route="trust">Magazin</a>
+        <a href="#support" data-route="support">Karrier</a>
+        <a href="#support" data-route="support">Elérhetőségek</a>
       </div>
     </div>
 
@@ -86,7 +86,6 @@
             class="brand-image"
             src="./NN-logo.png"
             alt="NN"
-            onerror="this.onerror=null;this.src='https://www.nn.hu/documents/10182/8549886/NN+log%C3%B3+%281%29.png'"
           >
         </a>
         <nav aria-label="Oldalak">
@@ -98,13 +97,29 @@
         </nav>
         <div class="nav-actions" aria-label="Gyors műveletek">
           <span class="icon-button" aria-hidden="true">⌕</span>
-          <a class="login-link" href="https://direkt.nn.hu" target="_blank" rel="noreferrer">Belépés</a>
+          <a class="login-link" href="#support" data-route="support">Belépés</a>
         </div>
         <div class="mobile-actions" aria-label="Mobil gyors műveletek">
           <a href="#support" data-route="support" aria-label="Keresés">⌕</a>
-          <a href="https://direkt.nn.hu" target="_blank" rel="noreferrer" aria-label="Belépés">◎</a>
-          <a href="#support" data-route="support" aria-label="Menü">☰</a>
+          <a href="#support" data-route="support" aria-label="Belépés">◎</a>
+          <button class="mobile-menu-toggle" type="button" aria-label="Menü megnyitása" aria-expanded="false" aria-controls="mobileMenu">☰</button>
         </div>
+      </div>
+      <div class="mobile-menu" id="mobileMenu" hidden>
+        <a href="#calculators" data-route="calculators">Kalkulátorok <span>→</span></a>
+        <a href="#pages" data-route="pages">Élethelyzetek <span>→</span></a>
+        <a href="#trust" data-route="trust">Miért NN? <span>→</span></a>
+        <a href="#support" data-route="support">Ügyfélszolgálat</a>
+        <a href="#documents" data-route="documents">Dokumentumtár</a>
+        <hr>
+        <a href="#support" data-route="support">Belépek az NN Direktbe</a>
+        <a href="#support" data-route="support">Belépek az NN Payre</a>
+        <a href="#trust" data-route="trust">Vállalati megoldások</a>
+        <a href="#trust" data-route="trust">Magazin</a>
+        <a href="#support" data-route="support">Karrier</a>
+        <a href="#support" data-route="support">Elérhetőségek</a>
+        <hr>
+        <a class="accessibility-link" href="#support" data-route="support"><span class="accessibility-dot">•••</span> Akadálymentes verzió</a>
       </div>
     </header>
 
@@ -191,16 +206,16 @@
           <article class="help-card">
             <h2>Segíthetünk?</h2>
             <div class="help-links">
-              <a href="https://www.nn.hu/az-nn-rol/elerhetosegek" target="_blank" rel="noreferrer"><span>⌖</span>Elérhetőségek</a>
-              <a href="https://www.nn.hu/hasznos-informaciok" target="_blank" rel="noreferrer"><span>i</span>Hasznos információk</a>
-              <a href="https://www.nn.hu/ugyfelszolgalat" target="_blank" rel="noreferrer"><span>✉</span>Üzenetet küldök</a>
-              <a href="https://www.nn.hu/panaszkezeles" target="_blank" rel="noreferrer"><span>!</span>Panaszkezelés</a>
+              <a href="#support" data-route="support"><span>⌖</span>Elérhetőségek</a>
+              <a href="#trust" data-route="trust"><span>i</span>Hasznos információk</a>
+              <a href="#support" data-route="support"><span>✉</span>Üzenetet küldök</a>
+              <a href="#support" data-route="support"><span>!</span>Panaszkezelés</a>
             </div>
           </article>
           <article class="login-card">
             <h2>Belépés</h2>
             <p>Megtekintheti leveleit és szerződéseivel kapcsolatos legfontosabb adatait.</p>
-            <a href="https://direkt.nn.hu" target="_blank" rel="noreferrer">Belépek az NN Direktre</a>
+            <a href="#support" data-route="support">Belépek az NN Direktre</a>
           </article>
         </section>
 
@@ -221,7 +236,7 @@
             <div class="product-image health-img" aria-hidden="true"></div>
             <h2>Egészség Útlevél</h2>
             <p>Külföldi gyógykezelés lehetősége meghatározott betegségek esetére.</p>
-            <a href="https://www.nn.hu/egeszsegbiztositas/egeszseg-utlevel/miert-eri-meg-onnek" target="_blank" rel="noreferrer">Részletek</a>
+            <a href="#pages" data-route="pages">Részletek</a>
           </article>
         </section>
 
@@ -333,7 +348,7 @@
                 <div><dt>Szolgáltatási összeglimit</dt><dd>2 000 000 EUR</dd></div>
                 <div><dt>Főbb helyzetek</dt><dd>Daganat, szívműtét, idegsebészet, élődonoros szervátültetés</dd></div>
               </dl>
-              <a class="primary-action full" href="https://www.nn.hu/egeszsegbiztositas/egeszseg-utlevel/miert-eri-meg-onnek">
+              <a class="primary-action full" href="#pages" data-route="pages">
                 Megnézem az Egészség Útlevelet
               </a>
             </aside>
@@ -387,8 +402,8 @@
                 <span>2-5 évnyi kieső jövedelem</span>
                 <span>Gyermekek várható kiadásai</span>
               </div>
-              <a class="primary-action full" href="https://www.nn.hu/eletbiztositas/amulett/miert-eri-meg-onnek">
-                Tovább az NN életbiztosítás oldalra
+              <a class="primary-action full" href="#pages" data-route="pages">
+                Tovább az életbiztosítási kérdésekhez
               </a>
             </aside>
           </div>
@@ -663,7 +678,7 @@
               kapcsolódik. A név, a vállalati háttér, az elérhetőség és a termékterületek
               legyenek könnyen megtalálhatók.
             </p>
-            <a href="https://www.nn.hu/rolunk" target="_blank" rel="noreferrer">Rólunk</a>
+            <a href="#trust" data-route="trust">Rólunk</a>
           </article>
           <article id="trust-compare">
             <h2>Összehasonlítási környezet</h2>
@@ -682,7 +697,7 @@
               Hasznos, ha könnyen eljut a biztosítási piacról, fogyasztóvédelemről,
               termékfeltételekről és pénzügyi tudnivalókról szóló anyagokhoz.
             </p>
-            <a href="https://www.nn.hu/dokumentumtar" target="_blank" rel="noreferrer">Dokumentumtár</a>
+            <a href="#documents" data-route="documents">Dokumentumtár</a>
           </article>
           <article id="trust-research">
             <h2>Éves pénzügyi döntési kutatás</h2>
@@ -691,7 +706,7 @@
               biztosításról, nyugdíjról és pénzügyi kockázatokról. Ez nem értékesítési szöveg,
               hanem olyan háttéranyag, amelyből az ügyfelek és az újságírók is tanulhatnak.
             </p>
-            <a href="https://www.nn.hu/magazin" target="_blank" rel="noreferrer">Magazin</a>
+            <a href="#trust" data-route="trust">Magazin</a>
           </article>
         </section>
 
@@ -745,28 +760,28 @@
               <h2>NN Direkt és elektronikus kommunikáció</h2>
               <p>Regisztráció, belépés, online levelek és szerződésadatok kezelése egy helyen.</p>
             </div>
-            <a href="https://direkt.nn.hu" target="_blank" rel="noreferrer">Belépek</a>
+            <a href="#support" data-route="support">Belépek</a>
           </article>
           <article data-support-topic="díjfizetés bankkártyás fizetés átutalás gyakoriság díjrendezés">
             <div>
               <h2>Díjfizetés</h2>
               <p>Díjrendezés, bankkártyás fizetés, átutalási tudnivalók és fizetési gyakoriság.</p>
             </div>
-            <a href="https://www.nn.hu/ugyfelszolgalat" target="_blank" rel="noreferrer">Részletek</a>
+            <a href="#support" data-route="support">Részletek</a>
           </article>
           <article data-support-topic="szerződés adatmódosítás elérhetőség kedvezményezett díjfizetés személyes adatok">
             <div>
               <h2>Szerződés- és adatmódosítás</h2>
               <p>Elérhetőségek, kedvezményezett, díjfizetési adatok vagy személyes adatok módosítása.</p>
             </div>
-            <a href="https://www.nn.hu/ugyfelszolgalat" target="_blank" rel="noreferrer">Megnézem</a>
+            <a href="#support" data-route="support">Megnézem</a>
           </article>
           <article data-support-topic="szolgáltatási igény bejelentése biztosítási esemény dokumentum kifizetés">
             <div>
               <h2>Szolgáltatási igény bejelentése</h2>
               <p>Mi történik biztosítási esemény után, milyen dokumentumokra lehet szükség, hol indul az ügyintézés.</p>
             </div>
-            <a href="https://www.nn.hu/ugyfelszolgalat" target="_blank" rel="noreferrer">Tovább</a>
+            <a href="#support" data-route="support">Tovább</a>
           </article>
         </section>
       </section>
@@ -809,17 +824,17 @@
           <div class="doc-row" data-doc-name="általános életbiztosítási szabályzat" data-audience="private">
             <strong>Általános Életbiztosítási Szabályzat</strong>
             <span>2026. január 1-től</span>
-            <a href="https://www.nn.hu/dokumentumtar" target="_blank" rel="noreferrer">Letöltöm</a>
+            <a href="#documents" data-route="documents">Letöltöm</a>
           </div>
           <div class="doc-row" data-doc-name="biztosítási adatvédelmi tájékoztató" data-audience="private business">
             <strong>Biztosítási adatvédelmi tájékoztató</strong>
             <span>2026. január 12-től</span>
-            <a href="https://www.nn.hu/dokumentumtar" target="_blank" rel="noreferrer">Letöltöm</a>
+            <a href="#documents" data-route="documents">Letöltöm</a>
           </div>
           <div class="doc-row" data-doc-name="nyugdíjbiztosítási adózási tájékoztató" data-audience="private">
             <strong>Nyugdíjbiztosítási adózási tájékoztató</strong>
             <span>Aktuális</span>
-            <a href="https://www.nn.hu/dokumentumtar" target="_blank" rel="noreferrer">Letöltöm</a>
+            <a href="#documents" data-route="documents">Letöltöm</a>
           </div>
         </section>
       </section>

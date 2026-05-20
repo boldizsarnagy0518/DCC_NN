@@ -9,6 +9,8 @@ const routeAliases = {
   life: "calculators",
   health: "calculators",
 };
+const mobileMenu = document.getElementById("mobileMenu");
+const mobileMenuToggle = document.querySelector(".mobile-menu-toggle");
 
 function getRouteFromHash() {
   const route = window.location.hash.replace("#", "");
@@ -31,6 +33,21 @@ function showPage(route, updateHash = true) {
   }
 }
 
+function setMobileMenu(open) {
+  if (!mobileMenu || !mobileMenuToggle) return;
+
+  mobileMenu.hidden = !open;
+  mobileMenu.classList.toggle("is-open", open);
+  mobileMenuToggle.setAttribute("aria-expanded", String(open));
+  mobileMenuToggle.setAttribute("aria-label", open ? "Menü bezárása" : "Menü megnyitása");
+  mobileMenuToggle.textContent = open ? "×" : "☰";
+  document.body.classList.toggle("menu-open", open);
+}
+
+function closeMobileMenu() {
+  setMobileMenu(false);
+}
+
 function setActiveContentTab(targetId) {
   const tabs = [...document.querySelectorAll(".content-tabs [data-scroll-target]")];
   if (!tabs.length) return;
@@ -45,10 +62,24 @@ function bindRoutes() {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       showPage(link.dataset.route);
+      closeMobileMenu();
     });
   });
 
+  if (mobileMenuToggle) {
+    mobileMenuToggle.addEventListener("click", () => {
+      setMobileMenu(mobileMenu?.hidden !== false);
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeMobileMenu();
+    }
+  });
+
   window.addEventListener("hashchange", () => {
+    closeMobileMenu();
     const route = getRouteFromHash();
     if (pages.some((page) => page.dataset.page === route)) {
       showPage(route, false);
