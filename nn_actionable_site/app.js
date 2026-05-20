@@ -5,9 +5,7 @@ const formatFt = (value) =>
 
 const routes = [...document.querySelectorAll("[data-route]")];
 const pages = [...document.querySelectorAll("[data-page]")];
-let pensionTarget = 70;
 const routeAliases = {
-  pension: "calculators",
   life: "calculators",
   health: "calculators",
 };
@@ -95,7 +93,7 @@ function setValueText(id, value) {
   const element = document.querySelector(`[data-value-for="${id}"]`);
   if (!element) return;
 
-  if (["age", "healthAge"].includes(id)) {
+  if (id === "healthAge") {
     element.textContent = `${value} év`;
   } else if (id === "children") {
     element.textContent = value;
@@ -106,32 +104,12 @@ function setValueText(id, value) {
 
 function bindRange(id, callback) {
   const input = document.getElementById(id);
+  if (!input) return;
   input.addEventListener("input", () => {
     setValueText(id, Number(input.value));
     callback();
   });
   setValueText(id, Number(input.value));
-}
-
-function updatePension() {
-  const age = Number(document.getElementById("age").value);
-  const income = Number(document.getElementById("income").value);
-  const saving = Number(document.getElementById("saving").value);
-  const yearsLeft = Math.max(65 - age, 0);
-  const estimatedStatePension = income * 0.52;
-  const targetIncome = income * (pensionTarget / 100);
-  const gap = Math.max(targetIncome - estimatedStatePension, 0);
-  const annualSaving = saving * 12;
-  const taxCredit = Math.min(annualSaving * 0.2, 130000);
-
-  document.getElementById("pensionGap").textContent = formatFt(gap);
-  document.getElementById("statePension").textContent = formatFt(estimatedStatePension);
-  document.getElementById("taxCredit").textContent = formatFt(taxCredit);
-  document.getElementById("yearsLeft").textContent = `${yearsLeft} év`;
-  document.getElementById("pensionNarrative").textContent =
-    gap > 0
-      ? `A célzott ${pensionTarget}%-os jövedelemszinthez a becsült havi nyugdíjrés ${formatFt(gap)}. A jelenlegi beállítások mellett az éves SZJA-jóváírás becslése ${formatFt(taxCredit)}.`
-      : "A becsült állami nyugdíj eléri a beállított célarányt. Ettől még érdemes átnézni, mekkora tartalékot szeretnél építeni nyugdíjra.";
 }
 
 function updateLife() {
@@ -168,23 +146,12 @@ function updateHealth() {
 }
 
 function initCalculators() {
-  ["age", "income", "saving"].forEach((id) => bindRange(id, updatePension));
-  document.querySelectorAll("[data-target-income]").forEach((button) => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll("[data-target-income]").forEach((item) => item.classList.remove("active"));
-      button.classList.add("active");
-      pensionTarget = Number(button.dataset.targetIncome);
-      updatePension();
-    });
-  });
-
   ["familyIncome", "debt", "children", "reserve"].forEach((id) => bindRange(id, updateLife));
   ["concern", "travelCare", "familySupport"].forEach((id) => {
     document.getElementById(id).addEventListener("change", updateHealth);
   });
   bindRange("healthAge", updateHealth);
 
-  updatePension();
   updateLife();
   updateHealth();
 }

@@ -81,20 +81,20 @@
     ]
   },
   {
-    "id": "improved-pension-gap-calculator",
-    "title": "Nyugdíjrés kalkulátor",
+    "id": "improved-health-passport-relevance-calculator",
+    "title": "Egészség Útlevél relevancia-kalkulátor",
     "type": "calculator",
     "pillar": "Actionability",
     "status": "mocked_future_asset",
-    "source_url": "https://www.nn.hu/mock/nyugdijres-kalkulator",
+    "source_url": "https://www.nn.hu/mock/egeszseg-utlevel-relevancia-kalkulator",
     "tags": [
-      "nyugdíjrés",
-      "nyugdíjkalkulátor",
-      "Motiva",
-      "megtakarítás",
+      "Egészség Útlevél",
+      "egészségbiztosítás",
+      "külföldi gyógykezelés",
+      "második orvosi szakvélemény",
       "következő lépés"
     ],
-    "body": "A nyugdíjrés kalkulátor megmutatja, mekkora különbség lehet a várt állami nyugdíj és a kívánt havi jövedelem között. A mock eredmény életkor és megtakarítási cél alapján javasol következő lépést: guide olvasása, Motiva termékinformáció vagy személyes tanácsadói beszélgetés.",
+    "body": "Az Egészség Útlevél relevancia-kalkulátor rövid kérdéssorral segít eldönteni, érdemes-e részletesen megnézni a külföldi gyógykezeléshez, második orvosi szakvéleményhez, utazásszervezéshez és kísérő támogatásához kapcsolódó biztosítást. Az eredmény nem egészségügyi tanácsadás, hanem következő lépést ad: feltételek áttekintése, Egészség Útlevél termékoldal vagy tanácsadói egyeztetés.",
     "recommendation_ids": [
       "R9"
     ]

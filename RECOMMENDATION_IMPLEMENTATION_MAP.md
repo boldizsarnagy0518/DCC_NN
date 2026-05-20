@@ -526,10 +526,10 @@ Turn AI visibility into actionable next steps by giving models concrete NN-owned
   - Mock URL: `https://www.nn.hu/mock/eletbiztositas-kalkulator`
   - Life insurance cover estimator.
 
-- `improved-pension-gap-calculator`
+- `improved-health-passport-relevance-calculator`
   - Type: `calculator`
-  - Mock URL: `https://www.nn.hu/mock/nyugdijres-kalkulator`
-  - Pension gap calculator.
+  - Mock URL: `https://www.nn.hu/mock/egeszseg-utlevel-relevancia-kalkulator`
+  - Egészség Útlevél relevance calculator.
 
 - `improved-tax-calculator`
   - Type: `calculator`

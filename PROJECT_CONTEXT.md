@@ -439,7 +439,7 @@ Goal:
 
 Recommended tools:
 
-- pension gap calculator;
+- Egészség Útlevél relevance calculator;
 - SZJA tax benefit calculator;
 - life insurance need estimator;
 - health insurance decision-support calculator.
