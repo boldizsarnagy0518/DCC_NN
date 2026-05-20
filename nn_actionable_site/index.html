@@ -16,7 +16,7 @@
     <meta property="og:type" content="website">
     <link rel="icon" type="image/png" href="./favicon.png">
     <link rel="apple-touch-icon" href="./favicon.png">
-    <link rel="stylesheet" href="./styles.css?v=20260505-tabs2">
+    <link rel="stylesheet" href="./styles.css?v=20260520-menu2">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -100,28 +100,50 @@
           <a class="login-link" href="#support" data-route="support">Belépés</a>
         </div>
         <div class="mobile-actions" aria-label="Mobil gyors műveletek">
-          <a href="#support" data-route="support" aria-label="Keresés">⌕</a>
-          <a href="#support" data-route="support" aria-label="Belépés">◎</a>
-          <button class="mobile-menu-toggle" type="button" aria-label="Menü megnyitása" aria-expanded="false" aria-controls="mobileMenu">☰</button>
+          <a href="#support" data-route="support" aria-label="Keresés">
+            <svg class="mobile-icon" viewBox="0 0 32 32" aria-hidden="true">
+              <circle cx="14" cy="14" r="8"></circle>
+              <path d="m20 20 7 7"></path>
+            </svg>
+          </a>
+          <a href="#support" data-route="support" aria-label="Belépés">
+            <svg class="mobile-icon" viewBox="0 0 32 32" aria-hidden="true">
+              <circle cx="16" cy="16" r="12"></circle>
+              <circle cx="16" cy="12" r="4"></circle>
+              <path d="M9 24c1.5-4 4-6 7-6s5.5 2 7 6"></path>
+            </svg>
+          </a>
+          <button class="mobile-menu-toggle" type="button" aria-label="Menü megnyitása" aria-expanded="false" aria-controls="mobileMenu">
+            <svg class="mobile-icon menu-symbol" viewBox="0 0 32 32" aria-hidden="true">
+              <path d="M6 9h20"></path>
+              <path d="M6 16h20"></path>
+              <path d="M6 23h20"></path>
+            </svg>
+            <svg class="mobile-icon close-symbol" viewBox="0 0 32 32" aria-hidden="true">
+              <path d="M8 8l16 16"></path>
+              <path d="M24 8 8 24"></path>
+            </svg>
+          </button>
         </div>
       </div>
-      <div class="mobile-menu" id="mobileMenu" hidden>
-        <a href="#calculators" data-route="calculators">Kalkulátorok <span>→</span></a>
-        <a href="#pages" data-route="pages">Élethelyzetek <span>→</span></a>
-        <a href="#trust" data-route="trust">Miért NN? <span>→</span></a>
-        <a href="#support" data-route="support">Ügyfélszolgálat</a>
-        <a href="#documents" data-route="documents">Dokumentumtár</a>
-        <hr>
-        <a href="#support" data-route="support">Belépek az NN Direktbe</a>
-        <a href="#support" data-route="support">Belépek az NN Payre</a>
-        <a href="#trust" data-route="trust">Vállalati megoldások</a>
-        <a href="#trust" data-route="trust">Magazin</a>
-        <a href="#support" data-route="support">Karrier</a>
-        <a href="#support" data-route="support">Elérhetőségek</a>
-        <hr>
-        <a class="accessibility-link" href="#support" data-route="support"><span class="accessibility-dot">•••</span> Akadálymentes verzió</a>
-      </div>
     </header>
+
+    <div class="mobile-menu" id="mobileMenu" hidden>
+      <a href="#calculators" data-route="calculators">Kalkulátorok <span>→</span></a>
+      <a href="#pages" data-route="pages">Élethelyzetek <span>→</span></a>
+      <a href="#trust" data-route="trust">Miért NN? <span>→</span></a>
+      <a href="#support" data-route="support">Ügyfélszolgálat</a>
+      <a href="#documents" data-route="documents">Dokumentumtár</a>
+      <hr>
+      <a href="#support" data-route="support">Belépek az NN Direktbe</a>
+      <a href="#support" data-route="support">Belépek az NN Payre</a>
+      <a href="#trust" data-route="trust">Vállalati megoldások</a>
+      <a href="#trust" data-route="trust">Magazin</a>
+      <a href="#support" data-route="support">Karrier</a>
+      <a href="#support" data-route="support">Elérhetőségek</a>
+      <hr>
+      <a class="accessibility-link" href="#support" data-route="support"><span class="accessibility-dot">•••</span> Akadálymentes verzió</a>
+    </div>
 
     <main>
       <section id="home" class="page active" data-page="home">
@@ -840,6 +862,6 @@
       </section>
     </main>
 
-    <script src="./app.js?v=20260505-tabs3"></script>
+    <script src="./app.js?v=20260520-menu2"></script>
   </body>
 </html>

@@ -171,6 +171,28 @@ nav a.active {
   cursor: pointer;
 }
 
+.mobile-icon {
+  width: 32px;
+  height: 32px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.close-symbol {
+  display: none;
+}
+
+.mobile-menu-toggle.is-open .menu-symbol {
+  display: none;
+}
+
+.mobile-menu-toggle.is-open .close-symbol {
+  display: block;
+}
+
 .mobile-menu {
   display: none;
 }
@@ -1433,7 +1455,7 @@ cite {
   .mobile-menu {
     position: fixed;
     inset: 88px 0 0;
-    z-index: 24;
+    z-index: 1000;
     display: none;
     overflow-y: auto;
     padding: 26px 40px 36px;
@@ -1444,6 +1466,10 @@ cite {
 
   .mobile-menu.is-open {
     display: block;
+  }
+
+  .mobile-actions {
+    z-index: 1001;
   }
 
   .mobile-menu a {

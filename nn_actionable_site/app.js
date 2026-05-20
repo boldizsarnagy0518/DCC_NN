@@ -38,9 +38,9 @@ function setMobileMenu(open) {
 
   mobileMenu.hidden = !open;
   mobileMenu.classList.toggle("is-open", open);
+  mobileMenuToggle.classList.toggle("is-open", open);
   mobileMenuToggle.setAttribute("aria-expanded", String(open));
   mobileMenuToggle.setAttribute("aria-label", open ? "Menü bezárása" : "Menü megnyitása");
-  mobileMenuToggle.textContent = open ? "×" : "☰";
   document.body.classList.toggle("menu-open", open);
 }
 
