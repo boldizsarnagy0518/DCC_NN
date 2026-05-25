@@ -17,6 +17,7 @@ const accessibilityReset = document.querySelector("[data-accessibility-reset]");
 const fontSizeButtons = [...document.querySelectorAll("[data-font-size]")];
 const accessibilityStorageKey = "nnAccessibilityMode";
 const fontSizeStorageKey = "nnAccessibilityFontSize";
+let lockedScrollY = 0;
 
 function getRouteFromHash() {
   const route = window.location.hash.replace("#", "");
@@ -39,6 +40,32 @@ function showPage(route, updateHash = true) {
   }
 }
 
+function lockPageScroll() {
+  if (document.body.classList.contains("menu-open")) return;
+
+  lockedScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+  document.documentElement.classList.add("menu-open");
+  document.body.classList.add("menu-open");
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${lockedScrollY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
+}
+
+function unlockPageScroll() {
+  if (!document.body.classList.contains("menu-open")) return;
+
+  document.documentElement.classList.remove("menu-open");
+  document.body.classList.remove("menu-open");
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.left = "";
+  document.body.style.right = "";
+  document.body.style.width = "";
+  window.scrollTo(0, lockedScrollY);
+}
+
 function setMobileMenu(open) {
   if (!mobileMenu || !mobileMenuToggle) return;
 
@@ -47,7 +74,11 @@ function setMobileMenu(open) {
   mobileMenuToggle.classList.toggle("is-open", open);
   mobileMenuToggle.setAttribute("aria-expanded", String(open));
   mobileMenuToggle.setAttribute("aria-label", open ? "Menü bezárása" : "Menü megnyitása");
-  document.body.classList.toggle("menu-open", open);
+  if (open) {
+    lockPageScroll();
+  } else {
+    unlockPageScroll();
+  }
 }
 
 function closeMobileMenu() {
