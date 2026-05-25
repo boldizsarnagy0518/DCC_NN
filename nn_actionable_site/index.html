@@ -16,7 +16,7 @@
     <meta property="og:type" content="website">
     <link rel="icon" type="image/png" href="./favicon.png">
     <link rel="apple-touch-icon" href="./favicon.png">
-    <link rel="stylesheet" href="./styles.css?v=20260520-menu2">
+    <link rel="stylesheet" href="./styles.css?v=20260525-accessibility">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -96,6 +96,11 @@
           <a href="#documents" data-route="documents">Dokumentumtár</a>
         </nav>
         <div class="nav-actions" aria-label="Gyors műveletek">
+          <button class="accessibility-toggle" type="button" aria-label="Akadálymentes verzió bekapcsolása" aria-pressed="false" data-accessibility-toggle>
+            <span class="accessibility-toggle-icon" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </span>
+          </button>
           <span class="icon-button" aria-hidden="true">⌕</span>
           <a class="login-link" href="#support" data-route="support">Belépés</a>
         </div>
@@ -128,6 +133,13 @@
       </div>
     </header>
 
+    <div class="accessibility-toolbar" aria-label="Akadálymentes beállítások" hidden>
+      <button type="button" data-font-size="base">A</button>
+      <button type="button" data-font-size="large">A +</button>
+      <button type="button" data-font-size="larger">A ++</button>
+      <button type="button" data-accessibility-reset>Teljes verzió</button>
+    </div>
+
     <div class="mobile-menu" id="mobileMenu" hidden>
       <a href="#calculators" data-route="calculators">Kalkulátorok <span>→</span></a>
       <a href="#pages" data-route="pages">Élethelyzetek <span>→</span></a>
@@ -142,7 +154,9 @@
       <a href="#support" data-route="support">Karrier</a>
       <a href="#support" data-route="support">Elérhetőségek</a>
       <hr>
-      <a class="accessibility-link" href="#support" data-route="support"><span class="accessibility-dot">•••</span> Akadálymentes verzió</a>
+      <button class="accessibility-link" type="button" aria-pressed="false" data-accessibility-toggle>
+        <span class="accessibility-dot" aria-hidden="true">•••</span> Akadálymentes verzió
+      </button>
     </div>
 
     <main>
@@ -862,6 +876,6 @@
       </section>
     </main>
 
-    <script src="./app.js?v=20260520-menu2"></script>
+    <script src="./app.js?v=20260525-accessibility"></script>
   </body>
 </html>

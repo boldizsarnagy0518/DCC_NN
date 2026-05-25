@@ -16,6 +16,142 @@
   --shadow: 0 8px 22px rgba(23, 23, 23, 0.08);
 }
 
+body.accessible-mode {
+  --orange: #ffff00;
+  --orange-dark: #ffff00;
+  --orange-deep: #ffff00;
+  --gold: #ffff00;
+  --ink: #ffff00;
+  --muted: #ffff00;
+  --line: #ffff00;
+  --paper: #000000;
+  --soft-paper: #000000;
+  --white: #000000;
+  --green: #ffff00;
+  --blue: #ffff00;
+  --soft-blue: #000000;
+  --soft-green: #000000;
+  --shadow: none;
+  color: #ffff00;
+  background: #000000;
+}
+
+body.accessible-mode * {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+body.accessible-mode a,
+body.accessible-mode button,
+body.accessible-mode input,
+body.accessible-mode select,
+body.accessible-mode textarea {
+  color: #ffff00;
+}
+
+body.accessible-mode button,
+body.accessible-mode input,
+body.accessible-mode select,
+body.accessible-mode textarea {
+  border-color: #ffff00;
+  background: #000000;
+}
+
+body.accessible-mode .top-strip,
+body.accessible-mode .site-header,
+body.accessible-mode .mobile-menu,
+body.accessible-mode .accessibility-toolbar,
+body.accessible-mode .hero-card,
+body.accessible-mode .help-card,
+body.accessible-mode .login-card,
+body.accessible-mode .product-grid,
+body.accessible-mode .product-grid article,
+body.accessible-mode .home-reasons,
+body.accessible-mode .page-head,
+body.accessible-mode .calculator-section,
+body.accessible-mode .calculator,
+body.accessible-mode .result-card,
+body.accessible-mode .answer-block,
+body.accessible-mode .rewrite-page,
+body.accessible-mode .identity-card,
+body.accessible-mode .trust-grid article,
+body.accessible-mode .roadmap-item,
+body.accessible-mode .support-list article,
+body.accessible-mode .search-panel,
+body.accessible-mode .document-filter,
+body.accessible-mode .document-table,
+body.accessible-mode .doc-row,
+body.accessible-mode .before-after,
+body.accessible-mode .qa-list details {
+  border-color: #ffff00 !important;
+  background: #000000 !important;
+  color: #ffff00 !important;
+  backdrop-filter: none;
+}
+
+body.accessible-mode .nn-hero,
+body.accessible-mode .product-image,
+body.accessible-mode .health-img,
+body.accessible-mode .life-img {
+  background-color: #000000 !important;
+  background-image: none !important;
+}
+
+body.accessible-mode .brand-image {
+  display: none;
+}
+
+body.accessible-mode .brand::after {
+  content: "NN";
+  color: #ffff00;
+  font-size: 1.1rem;
+  font-weight: 900;
+  text-decoration: underline;
+}
+
+body.accessible-mode .accessibility-toggle,
+body.accessible-mode .accessibility-dot {
+  background: #ffff00;
+  color: #000000;
+}
+
+body.accessible-mode .primary-action,
+body.accessible-mode .secondary-action,
+body.accessible-mode .outline-action,
+body.accessible-mode .segmented,
+body.accessible-mode .content-tabs a,
+body.accessible-mode .help-links a,
+body.accessible-mode .login-card a,
+body.accessible-mode .product-grid a,
+body.accessible-mode .trust-grid a,
+body.accessible-mode .support-list a,
+body.accessible-mode .doc-row a {
+  border: 1px solid #ffff00;
+  background: #000000;
+  color: #ffff00;
+  text-decoration: underline;
+}
+
+body.accessible-mode .eyebrow,
+body.accessible-mode .result-label,
+body.accessible-mode small,
+body.accessible-mode cite,
+body.accessible-mode .microcopy {
+  color: #ffff00;
+}
+
+body.accessible-mode svg {
+  stroke: #ffff00;
+}
+
+body.accessible-mode.accessible-font-large {
+  font-size: 112.5%;
+}
+
+body.accessible-mode.accessible-font-larger {
+  font-size: 125%;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -199,6 +335,79 @@ nav a.active {
 
 .icon-button {
   font-size: 1.25rem;
+}
+
+.accessibility-toggle {
+  display: inline-grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: #ffd400;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.accessibility-toggle-icon {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.accessibility-toggle-icon span {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.accessibility-toggle-icon span:nth-child(1) {
+  left: 0;
+  top: 0;
+}
+
+.accessibility-toggle-icon span:nth-child(2) {
+  right: 0;
+  top: 0;
+}
+
+.accessibility-toggle-icon span:nth-child(3) {
+  left: 5.5px;
+  bottom: 0;
+}
+
+.accessibility-toolbar {
+  display: flex;
+  width: min(1000px, calc(100vw - 32px));
+  min-height: 42px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+  margin: 0 auto;
+  padding: 8px 0;
+  background: #000;
+  color: #ffff00;
+}
+
+.accessibility-toolbar[hidden] {
+  display: none;
+}
+
+.accessibility-toolbar button {
+  border: 0;
+  background: transparent;
+  color: #ffff00;
+  font-weight: 900;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.accessibility-toolbar button.active {
+  outline: 2px solid #ffff00;
+  outline-offset: 4px;
 }
 
 .login-link {
@@ -1472,18 +1681,27 @@ cite {
     z-index: 1001;
   }
 
-  .mobile-menu a {
+  .mobile-menu a,
+  .mobile-menu button.accessibility-link {
     display: flex;
+    width: 100%;
     min-height: 58px;
     align-items: center;
     justify-content: space-between;
+    padding: 0;
+    border: 0;
+    background: transparent;
     color: var(--ink);
+    font-family: inherit;
     font-size: 1.55rem;
     line-height: 1.12;
+    text-align: left;
     text-decoration: none;
+    cursor: pointer;
   }
 
-  .mobile-menu a span:not(.accessibility-dot) {
+  .mobile-menu a span:not(.accessibility-dot),
+  .mobile-menu button.accessibility-link span:not(.accessibility-dot) {
     font-size: 2rem;
     font-weight: 300;
   }
@@ -1511,6 +1729,18 @@ cite {
     font-size: 0.9rem;
     letter-spacing: -3px;
     line-height: 1;
+  }
+
+  .accessibility-toolbar {
+    position: sticky;
+    top: 88px;
+    z-index: 900;
+    width: 100vw;
+    min-height: 48px;
+    justify-content: flex-start;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 10px 18px;
   }
 
   .page,

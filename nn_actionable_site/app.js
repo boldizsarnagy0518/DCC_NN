@@ -11,6 +11,12 @@ const routeAliases = {
 };
 const mobileMenu = document.getElementById("mobileMenu");
 const mobileMenuToggle = document.querySelector(".mobile-menu-toggle");
+const accessibilityToggles = [...document.querySelectorAll("[data-accessibility-toggle]")];
+const accessibilityToolbar = document.querySelector(".accessibility-toolbar");
+const accessibilityReset = document.querySelector("[data-accessibility-reset]");
+const fontSizeButtons = [...document.querySelectorAll("[data-font-size]")];
+const accessibilityStorageKey = "nnAccessibilityMode";
+const fontSizeStorageKey = "nnAccessibilityFontSize";
 
 function getRouteFromHash() {
   const route = window.location.hash.replace("#", "");
@@ -46,6 +52,60 @@ function setMobileMenu(open) {
 
 function closeMobileMenu() {
   setMobileMenu(false);
+}
+
+function setAccessibilityFontSize(size) {
+  const nextSize = ["base", "large", "larger"].includes(size) ? size : "base";
+  document.body.classList.toggle("accessible-font-large", nextSize === "large");
+  document.body.classList.toggle("accessible-font-larger", nextSize === "larger");
+  fontSizeButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.fontSize === nextSize);
+  });
+  localStorage.setItem(fontSizeStorageKey, nextSize);
+}
+
+function setAccessibilityMode(enabled) {
+  if (!accessibilityToolbar) return;
+
+  document.body.classList.toggle("accessible-mode", enabled);
+  accessibilityToolbar.hidden = !enabled;
+  accessibilityToggles.forEach((button) => {
+    button.setAttribute("aria-pressed", String(enabled));
+    button.setAttribute(
+      "aria-label",
+      enabled ? "Akadálymentes verzió kikapcsolása" : "Akadálymentes verzió bekapcsolása",
+    );
+  });
+  localStorage.setItem(accessibilityStorageKey, enabled ? "on" : "off");
+  if (!enabled) {
+    setAccessibilityFontSize("base");
+  }
+}
+
+function initAccessibilityMode() {
+  if (!accessibilityToggles.length || !accessibilityToolbar) return;
+
+  setAccessibilityMode(localStorage.getItem(accessibilityStorageKey) === "on");
+  setAccessibilityFontSize(localStorage.getItem(fontSizeStorageKey) || "base");
+
+  accessibilityToggles.forEach((button) => {
+    button.addEventListener("click", () => {
+      setAccessibilityMode(!document.body.classList.contains("accessible-mode"));
+      closeMobileMenu();
+    });
+  });
+
+  fontSizeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      setAccessibilityFontSize(button.dataset.fontSize);
+    });
+  });
+
+  if (accessibilityReset) {
+    accessibilityReset.addEventListener("click", () => {
+      setAccessibilityMode(false);
+    });
+  }
 }
 
 function setActiveContentTab(targetId) {
@@ -227,5 +287,6 @@ function initDocumentFilter() {
 bindRoutes();
 initCalculators();
 initContentTabs();
+initAccessibilityMode();
 initSupportSearch();
 initDocumentFilter();
